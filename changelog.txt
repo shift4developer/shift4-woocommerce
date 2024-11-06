@@ -1,0 +1,9 @@
+*** Shift4 for WooCommerce Changelog ***
+
+2024-04-08 - version 1.0.1
+* Fixed an issue that broke the payment form in scenarios where Shift4 was not available on the initial page load,
+* Updated text domain to correctly match plugin file,
+* Added "version", "Requires PHP" and "WC tested up to" plugin headers.
+
+2024-02-29 - version 1.0.0
+* Initial release.

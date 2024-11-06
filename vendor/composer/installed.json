@@ -1,0 +1,53 @@
+{
+    "packages": [
+        {
+            "name": "shift4/shift4-php",
+            "version": "v3.0.0",
+            "version_normalized": "3.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shift4developer/shift4-php.git",
+                "reference": "a561641e502a7d0022f7dee99662d4b7e7da64a6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shift4developer/shift4-php/zipball/a561641e502a7d0022f7dee99662d4b7e7da64a6",
+                "reference": "a561641e502a7d0022f7dee99662d4b7e7da64a6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "10"
+            },
+            "time": "2023-11-08T14:28:27+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Shift4\\": "lib/Shift4/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shift4",
+                    "homepage": "https://dev.shift4.com/"
+                }
+            ],
+            "description": "Shift4 PHP Library",
+            "homepage": "https://dev.shift4.com/",
+            "support": {
+                "issues": "https://github.com/shift4developer/shift4-php/issues",
+                "source": "https://github.com/shift4developer/shift4-php/tree/v3.0.0"
+            },
+            "install-path": "../shift4/shift4-php"
+        }
+    ],
+    "dev": false,
+    "dev-package-names": []
+}

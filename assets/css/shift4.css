@@ -1,0 +1,116 @@
+#shift4-payment-error.hidden {
+    display: none;
+}
+
+#shift4-payment-error .wc-block-components-notice-banner {
+    margin: 0;
+}
+
+#shift4-payment-form label {
+    margin-bottom: 0;
+}
+
+#shift4-payment-form,
+.shift4-payment-field {
+    display: grid;
+    gap: var(--wp--preset--spacing--20);
+}
+
+.shift4-payment-input {
+    background: var(--wp--preset--color--white);
+    border: 1px solid var(--wp--preset--color--contrast-2);
+    padding: calc(var(--wp--preset--spacing--10) / 2) var(--wp--preset--spacing--20);
+}
+
+.shift4-payment-field {
+    align-items: center;
+}
+
+.shift4-payment-fields .shift4-payment-field {
+    margin-bottom: 15px;
+}
+
+.shift4-payment-number-label,
+.shift4-payment-expiry-label,
+.shift4-payment-cvv-label {
+    grid-column: span 2 / span 2;
+}
+
+.shift4-payment-cvv-input,
+.shift4-payment-expiry-input,
+.shift4-payment-number-input {
+    grid-column: span 6 / span 6;
+}
+
+.shop_table thead th {
+    text-align: left;
+}
+
+#apple-pay-submit-button {
+    width: 100% !important;
+}
+
+.payment_method_shift4_applepay {
+    padding-bottom: 10px !important;
+}
+
+.shift4-payment-fields {
+    margin-top: 5px;
+}
+
+.woocommerce-SavedPaymentMethods {
+    padding: 0;
+}
+
+.woocommerce-SavedPaymentMethods-token img {
+    margin: 0 !important;
+}
+
+@media only screen and (min-width: 768px) {
+    .shift4-payment-number-label,
+    .shift4-payment-expiry-label,
+    .shift4-payment-expiry-input,
+    .shift4-payment-cvv-label,
+    .shift4-payment-cvv-input {
+        grid-column: span 2 / span 2;
+    }
+
+    .shift4-payment-number-input {
+        grid-column: span 6 / span 6;
+    }
+
+    #apple-pay-submit-button {
+        width: 300px !important;
+    }
+
+    .shift4-payment-fields,
+    .shift4-payment-field {
+        display: flex;
+    }
+
+    .shift4-payment-fields {
+        margin-top: 0;
+    }
+
+    .shift4-payment-fields .shift4-payment-field {
+        margin-bottom: 0;
+    }
+
+    .shift4-payment-expiry-input,
+    .shift4-payment-cvv-input {
+        min-width: 100px;
+        margin-right: 20px;
+    }
+
+    .shift4-payment-expiry-input {
+        margin-left: 23px;
+    }
+
+    .shift4-payment-number-input {
+        min-width: 325px;
+    }
+
+    .woocommerce-SavedPaymentMethods-saveNew {
+        margin-top: 20px !important;
+    }
+}
