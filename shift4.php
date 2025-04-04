@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Shift4
  * Description: WooCommerce payments via the Shift4 platform
- * Version: 1.0.1
+ * Version: 1.0.2
  * Plugin URI: https://www.shift4.com/
  * Author: Gene Commerce
  * Text Domain: shift4
