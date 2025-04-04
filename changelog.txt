@@ -1,5 +1,8 @@
 *** Shift4 for WooCommerce Changelog ***
 
+2025-04-04 - version 1.0.2
+* Fixed an issue that duplicates card fields
+
 2024-04-08 - version 1.0.1
 * Fixed an issue that broke the payment form in scenarios where Shift4 was not available on the initial page load,
 * Updated text domain to correctly match plugin file,
