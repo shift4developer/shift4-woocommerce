@@ -8,11 +8,14 @@ function initShift4() {
     const $checkoutForm = $('form.woocommerce-checkout, #order_review, #add_payment_method');
     const shift4 = window.Shift4(window.shift4Config.publicKey);
     let components;
-
+    let alreadyMounted = false;
     $('body').on('updated_checkout', function () {
         // Create components to securely collect sensitive payment data
         try {
-            components = shift4.createComponentGroup().automount("#shift4-payment-form");
+            if (!alreadyMounted) {
+                components = shift4.createComponentGroup().automount("#shift4-payment-form");
+                alreadyMounted = true;
+            }
         } catch (err) {
             // When WC checkout initializes it reloads the payment section so catch any missing DOM errors
         }
