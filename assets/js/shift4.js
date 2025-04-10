@@ -1,3 +1,16 @@
+const errorComponent = `
+    <div id="shift4-payment-error" class="woocommerce-NoticeGroup hidden">
+        <div class="wc-block-components-notice-banner is-error" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+                <path d="M12 3.2c-4.8 0-8.8 3.9-8.8 8.8 0 4.8 3.9 8.8 8.8 8.8 4.8 0 8.8-3.9 8.8-8.8 0-4.8-4-8.8-8.8-8.8zm0 16c-4 0-7.2-3.3-7.2-7.2C4.8 8 8 4.8 12 4.8s7.2 3.3 7.2 7.2c0 4-3.2 7.2-7.2 7.2zM11 17h2v-6h-2v6zm0-8h2V7h-2v2z"></path>
+            </svg>
+            <div class="wc-block-components-notice-banner__content"></div>
+        </div>
+    </div>
+`;
+const shift4FormSelector = '#shift4-payment-form';
+const shift4ErrorSelector = '#shift4-payment-error';
+
 function initShift4() {
     if (!window.shift4Config) {
         console.error('Shift4 payment gateway not configured');
@@ -8,13 +21,13 @@ function initShift4() {
     const $checkoutForm = $('form.woocommerce-checkout, #order_review, #add_payment_method');
     const shift4 = window.Shift4(window.shift4Config.publicKey);
     let components;
-    let alreadyMounted = false;
     $('body').on('updated_checkout', function () {
         // Create components to securely collect sensitive payment data
         try {
-            if (!alreadyMounted) {
-                components = shift4.createComponentGroup().automount("#shift4-payment-form");
-                alreadyMounted = true;
+            const isInitialzed = $('[data-shift4="number"]').children().size() > 0;
+            
+            if (!isInitialzed) { 
+                components = shift4.createComponentGroup().automount(shift4FormSelector);
             }
         } catch (err) {
             // When WC checkout initializes it reloads the payment section so catch any missing DOM errors
@@ -78,7 +91,7 @@ function initShift4() {
 
     function tokenCreatedCallback(token) {
         if (['strict', 'frictionless'].includes(window.shift4Config.threeDS)) {
-            const $shift4Form = $('#shift4-payment-form');
+            const $shift4Form = $(shift4FormSelector);
             var request = {
                 amount: $shift4Form.data('amount'),
                 currency: $shift4Form.data('currency'),
@@ -101,6 +114,7 @@ function initShift4() {
         setValidationState(false);
         $('form#order_review').unblock();
         $('form#add_payment_method').unblock();
+        $(document.body).trigger('checkout_error');
         return false;
     }
 
@@ -137,8 +151,16 @@ function initShift4() {
         $checkoutForm.attr('shift4-validated', state);
     }
 
+    function createErrorElement() {
+        if (!$(shift4ErrorSelector).length) {
+            const errorElement = $(errorComponent);
+            $(shift4FormSelector).prepend(errorElement);
+        }
+    }
+
     function addError(errorMessage) {
-        const $errorMessage = $('#shift4-payment-error');
+        createErrorElement();
+        const $errorMessage = $(shift4ErrorSelector);
         $errorMessage.removeClass('hidden');
         $errorMessage.find('.wc-block-components-notice-banner__content').text(errorMessage);
         $('form#order_review').unblock();
@@ -146,7 +168,8 @@ function initShift4() {
     }
 
     function clearError() {
-        const $errorMessage = $('#shift4-payment-error');
+        createErrorElement();
+        const $errorMessage = $(shift4ErrorSelector);
         $errorMessage.addClass('hidden');
     }
 }
