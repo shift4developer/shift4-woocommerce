@@ -1,5 +1,8 @@
 *** Shift4 for WooCommerce Changelog ***
 
+2025-04-25 - version 1.0.4
+* Added: Support HPOS(High-Performance Order Storage)
+
 2025-04-10 - version 1.0.3
 * Fixed: Card input fields were missing in the Shift4 payment method after changing the product quantity on the WooCommerce checkout page.
 * Fixed: Submit button remained in a loading state indefinitely when an error occurred during checkout.
