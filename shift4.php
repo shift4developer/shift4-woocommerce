@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Shift4
  * Description: WooCommerce payments via the Shift4 platform
- * Version: 1.0.3
+ * Version: 1.0.4
  * Plugin URI: https://dev.shift4.com/docs/plugins/woo-commerce/
  * Author: Shift4
  * Text Domain: shift4
@@ -25,6 +25,17 @@ if (file_exists($commitHashFile)) {
 }
 
 define("SHIFT4_PLUGIN_PATH", trailingslashit(plugin_dir_path(__FILE__)));
+
+// Declare the plugin is compatible with HPOS(High-Performance Order Storage)
+add_action('before_woocommerce_init', function () {
+    if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+            'custom_order_tables', // The internal flag of HPOS
+            __FILE__,
+            true
+        );
+    }
+});
 
 // Test to see if WooCommerce is active (including network activated).
 $plugin_path = trailingslashit( WP_PLUGIN_DIR ) . 'woocommerce/woocommerce.php';
