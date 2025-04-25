@@ -81,3 +81,23 @@ if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
         });
     });
 }
+
+add_action('woocommerce_blocks_payment_method_type_registration', function ($registry) {
+    if (!class_exists('Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType')) {
+        return;
+    }
+
+    require_once plugin_dir_path(__FILE__) . 'class-wc-shift4-block-support.php';
+
+    $container = Automattic\WooCommerce\Blocks\Package::container();
+    // registers as shared instance.
+    $container->register(
+        WC_Shift4_Block_Support::class,
+        function () {
+            return new WC_Shift4_Block_Support();
+        }
+    );
+    $registry->register(
+        $container->get(WC_Shift4_Block_Support::class)
+    );
+});
