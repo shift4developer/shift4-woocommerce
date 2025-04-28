@@ -29,11 +29,25 @@ class WC_Shift4_Block_Support extends AbstractPaymentMethodType
     {
         wp_enqueue_script(
             'wc-shift4-blocks-integration',
-            plugins_url('assets/js/blocks.js', __FILE__),
+            plugins_url('build/index.js', __FILE__),
             ['wc-blocks-checkout'],
             '1.0',
             true
         );
+
+        $shift4Config = [
+            // 'threeDS' => $this->threeDSecureMode(),
+            // 'threeDSValidationMessage' => __('3DS validation failed.', 'your-textdomain'),
+            'publicKey' => __('pk_test_5BbRbNGakOkmKltTZX21eiER', 'shift4')
+            // 'componentNeedsTriggering' => is_checkout_pay_page() || is_add_payment_method_page(),
+        ];
+        
+        wp_localize_script(
+            'wc-shift4-blocks-integration',
+            'shift4Config',
+            $shift4Config
+        );
+
         return ['wc-shift4-blocks-integration'];
     }
 

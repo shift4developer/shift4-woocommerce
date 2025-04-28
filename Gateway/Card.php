@@ -59,6 +59,7 @@ class Card extends \WC_Payment_Gateway_CC
         add_filter('woocommerce_payment_gateway_get_saved_payment_method_option_html', [$this, 'addCardNetworkIconToSavedCards'], 10, 2);
     }
 
+    // These are options you’ll show in admin on your gateway settings page and make use of the WC Settings API.
      public function init_form_fields()
     {
         return [
