@@ -29,14 +29,10 @@ const Shift4PaymentForm = ( { eventRegistration, emitResponse, billing } ) => {
             }
         }
 		const unsubscribe = onPaymentSetup( async () => {
-            console.log('onPaymentSetup')
-            console.log('cartTotal', cartTotal)
-            console.log('currency', currency)
             await window.shift4PaymentFormSubmit({
                 amount: cartTotal.value,
                 currency: currency.code
             })
-            console.log('paymentMethodDataRef.current:' + paymentMethodDataRef.current)
             return {
                 type: emitResponse.responseTypes.SUCCESS,
                 meta: {
@@ -57,10 +53,7 @@ const Shift4PaymentForm = ( { eventRegistration, emitResponse, billing } ) => {
 	] );
 
     return (
-        <div id="shift4-payment-form" ref={formRef}
-            data-amount={cartTotal}
-            data-currency={currency}
-        >
+        <div id="shift4-payment-form" ref={formRef}>
             <div className="shift4-payment-field">
                 <label className="shift4-payment-number-label">
                     Card number

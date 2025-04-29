@@ -55,7 +55,6 @@ function initShift4(blockOptions) {
 
     // Handler for checkout
     $checkoutForm.off('.shift4').on('checkout_place_order_shift4_card.shift4', function () {
-        console.log('checkout_place_order_shift4_card.shift4')
         // If payment is stored card no need to tokenize
         const newCardMethod = document.getElementById('wc-shift4_card-payment-token-new');
         if (newCardMethod && newCardMethod.checked === false) {
@@ -72,7 +71,6 @@ function initShift4(blockOptions) {
 
     // Handler for add-payment-method and order-review form
     $checkoutForm.on('submit', function (event) {
-        console.log('submit')
         const currentForm = $checkoutForm[0];
         const forms = ['add_payment_method', 'order_review'];
         if (forms.includes(currentForm.id) && document.getElementById('payment_method_shift4_card').checked) {
@@ -222,7 +220,6 @@ function initShift4(blockOptions) {
                 const result = await shift4.verifyThreeDSecure(request)
                 threeDSecureCompletedCallback(result)
             } catch (error) {
-                console.log('verifyThreeDSecure error: ' + error)
                 errorCallback(error);
             }
         } else {
