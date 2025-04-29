@@ -22,7 +22,7 @@ registerPaymentMethod({
     label: 'Credit Card (Shift4)',
     content: <Shift4PaymentForm />,
     edit: <p>Credit Card (Shift4)'</p>,
-    savedTokenComponent: createElement('p', null, 'simple savedTokenComponent'),
+    savedTokenComponent: createElement('p', null, ''),
     canMakePayment: () => true,
     ariaLabel: 'Shift4 Credit Card payment method',
     supports: {
