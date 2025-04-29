@@ -34,7 +34,6 @@
     <script>
         if (!window.shift4Initialised) {
             window.shift4Config = <?= json_encode($shift4Config) ?>;
-            console.log('window.shift4Config: ' + window.shift4Config)
             if (window.shift4JsLoaded) {
                 initShift4();
                 window.shift4Initialised = true;

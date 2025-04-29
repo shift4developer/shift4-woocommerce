@@ -21,17 +21,5 @@ registerPaymentMethod({
     edit: createElement('p', null, ''),
     savedTokenComponent: createElement('p', null, 'simple savedTokenComponent'),
     canMakePayment: () => true,
-    ariaLabel: 'Shift4 Credit Card payment method',
-    onSubmit: (args) => {
-        console.log('onSubmit: ' + args)
-    }
-    // onSubmit: async ( {
-    //     event, // 原始事件对象
-    //     checkoutStatus, // 结账状态管理器
-    //     paymentData, // 用户输入的支付数据
-    //     extensions, // 扩展对象（如订单处理）
-    //     dispatchActions, // 状态更新方法
-    // } ) => {
-    //     console.log('paymentData: ' + paymentData)
-    // }
+    ariaLabel: 'Shift4 Credit Card payment method'
 });

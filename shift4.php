@@ -59,6 +59,25 @@ if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
             $methods[] = $container->get(ApplePay::class);
             return $methods;
         });
+        add_action('woocommerce_blocks_payment_method_type_registration', function ($registry) use ($container) {
+            if (!class_exists('Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType')) {
+                return;
+            }
+        
+            require_once plugin_dir_path(__FILE__) . 'class-wc-shift4-block-support.php';
+        
+            $block_container = Automattic\WooCommerce\Blocks\Package::container();
+            // registers as shared instance.
+            $block_container->register(
+                WC_Shift4_Block_Support::class,
+                function () use ($container) {
+                    return new WC_Shift4_Block_Support($container->get(Card::class));
+                }
+            );
+            $registry->register(
+                $block_container->get(WC_Shift4_Block_Support::class)
+            );
+        });
         add_action( 'wp_footer', function() {
             wp_enqueue_script(
                 'shift4-js-client',
@@ -81,23 +100,3 @@ if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
         });
     });
 }
-
-add_action('woocommerce_blocks_payment_method_type_registration', function ($registry) {
-    if (!class_exists('Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType')) {
-        return;
-    }
-
-    require_once plugin_dir_path(__FILE__) . 'class-wc-shift4-block-support.php';
-
-    $container = Automattic\WooCommerce\Blocks\Package::container();
-    // registers as shared instance.
-    $container->register(
-        WC_Shift4_Block_Support::class,
-        function () {
-            return new WC_Shift4_Block_Support();
-        }
-    );
-    $registry->register(
-        $container->get(WC_Shift4_Block_Support::class)
-    );
-});

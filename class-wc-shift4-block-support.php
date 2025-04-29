@@ -1,9 +1,14 @@
 <?php
 
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
+use Shift4\WooCommerce\Gateway\Card;
 
 class WC_Shift4_Block_Support extends AbstractPaymentMethodType
 {
+
+    public function __construct(private Card $cardGateway,) {
+        $this->cardGateway = $cardGateway;
+    }
 
     /**
      * Payment method name defined by payment methods extending this class.
@@ -35,11 +40,11 @@ class WC_Shift4_Block_Support extends AbstractPaymentMethodType
             true
         );
 
+        $data = $this->get_payment_method_data();
         $shift4Config = [
-            // 'threeDS' => $this->threeDSecureMode(),
-            // 'threeDSValidationMessage' => __('3DS validation failed.', 'your-textdomain'),
-            'publicKey' => __('pk_test_5BbRbNGakOkmKltTZX21eiER', 'shift4')
-            // 'componentNeedsTriggering' => is_checkout_pay_page() || is_add_payment_method_page(),
+            'threeDS' => $data['3ds_mode'],
+            'threeDSValidationMessage' => __('3DS validation failed.', 'your-textdomain'),
+            'publicKey' => $data['publicKey'],
         ];
         
         wp_localize_script(
@@ -68,10 +73,13 @@ class WC_Shift4_Block_Support extends AbstractPaymentMethodType
 	 */
     public function get_payment_method_data()
     {
+        $gateway = $this->cardGateway;
         return [
-            'title'       => 'Shift4 Block Gateway',
-            'description' => 'Shift4 Block Gateway',
-            'supports'    => ['products'],
+            'title'         => $gateway->method_title,
+            'description'   => $gateway->method_description,
+            'supports'      => $gateway->supports,
+            '3ds_mode'      => $gateway->settings['3ds_mode'], 
+            'publicKey'     => $gateway->settings['shared_public_key'],
         ];
     }
 }
