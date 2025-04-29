@@ -28,6 +28,7 @@ const Shift4PaymentForm = ( { eventRegistration, emitResponse, billing } ) => {
                 document.addEventListener('shift4JsLoaded', initialize);
             }
         }
+        window.shift4UpdatedCheckout()
 		const unsubscribe = onPaymentSetup( async () => {
             await window.shift4PaymentFormSubmit({
                 amount: cartTotal.value,
