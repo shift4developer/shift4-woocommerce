@@ -27,8 +27,8 @@ function initShift4(blockOptions) {
         // Create components to securely collect sensitive payment data
         try {
             const isInitialzed = $('[data-shift4="number"]').children().size() > 0;
-            
-            if (!isInitialzed) { 
+
+            if (!isInitialzed) {
                 components = shift4.createComponentGroup().automount(shift4FormSelector);
             }
         } catch (err) {
@@ -42,7 +42,7 @@ function initShift4(blockOptions) {
     });
 
     // Listen for Shift4 post-messages to automatically select "new" option when user clicks the card form
-    window.addEventListener('message', function(event) {
+    window.addEventListener('message', function (event) {
         if (event.origin === 'https://js.dev.shift4.com') {
             $(':input.woocommerce-SavedPaymentMethods-tokenInput').trigger('click');
         }
@@ -228,6 +228,39 @@ function initShift4(blockOptions) {
     }
 
     window.shift4PaymentFormSubmit = block_paymentFormSubmit
+
+    async function payWithApplePay(amount) {
+        // Configure PaymentRequest method details
+        const applePayMethodData = {
+            supportedMethods: 'https://apple.com/apple-pay',
+            data: {
+                countryCode: 'GB',
+                supportedNetworks: [
+                    'amex',
+                    'discover',
+                    'masterCard',
+                    'visa',
+                ],
+            },
+        }
+        const shoppingCartDetails = {
+            total: {
+                label: window.shift4Config.blogName,
+                amount
+            },
+        }
+
+        const paymentRequest = shift4.createPaymentRequest([applePayMethodData], shoppingCartDetails)
+        try {
+            const result = await paymentRequest.show()
+            const applePayToken = result.details.token.paymentData
+            return applePayToken
+        } catch (error) {
+            errorCallback(error)
+        }
+    }
+
+    window.shift4PayWithApplePay = payWithApplePay
 }
 const event = new Event("shift4JsLoaded");
 document.dispatchEvent(event);
