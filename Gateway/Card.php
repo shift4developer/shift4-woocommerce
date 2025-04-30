@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Shift4\WooCommerce\Gateway;
 
@@ -60,7 +62,7 @@ class Card extends \WC_Payment_Gateway_CC
     }
 
     // These are options you’ll show in admin on your gateway settings page and make use of the WC Settings API.
-     public function init_form_fields()
+    public function init_form_fields()
     {
         return [
             'method_header' => [
@@ -188,11 +190,10 @@ class Card extends \WC_Payment_Gateway_CC
             throw new \Exception(
                 __(
                     'Sorry, we were unable to process your payment. ' .
-                    'Please check your card details are correct or try using a different payment method.',
+                        'Please check your card details are correct or try using a different payment method.',
                     'shift4'
                 )
             );
-
         }
     }
 
@@ -249,8 +250,12 @@ class Card extends \WC_Payment_Gateway_CC
          * - shift4_card_token=sometoken
          */
         // Place order and save card scenario
-        if (isset($_POST['wc-shift4_card-new-payment-method'])
-            && $_POST['wc-shift4_card-new-payment-method'] === 'true'
+        if (
+            isset($_POST['wc-shift4_card-new-payment-method'])
+            && (
+                $_POST['wc-shift4_card-new-payment-method'] === 'true'
+                || ($_POST['wc-shift4_card-new-payment-method'] === '1')
+            )
         ) {
             return self::PAYMENT_TYPE_SAVE_CARD;
         }
@@ -284,7 +289,7 @@ class Card extends \WC_Payment_Gateway_CC
 
     public function addCardNetworkIconToSavedCards($html, $token)
     {
-        $iconUrl = match($token->get_card_type()) {
+        $iconUrl = match ($token->get_card_type()) {
             'Visa' => 'https://js.securionpay.com/6ab079a7/v2/img/visa.svg',
             'Maestro',
             'MasterCard' => 'https://js.securionpay.com/6ab079a7/v2/img/mastercard.svg',

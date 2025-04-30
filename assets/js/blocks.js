@@ -1,6 +1,8 @@
 const { registerPaymentMethod } = window.wc.wcBlocksRegistry
 const { registerExpressPaymentMethod } = window.wc.wcBlocksRegistry
 const { createElement } = window.wp.element
+const { savedCardsEnabled } = window.shift4Config
+
 import React from 'react'
 import Shift4PaymentForm from './blocks-form'
 import Shift4ApplePay from './blocks-apple-pay'
@@ -27,7 +29,7 @@ registerPaymentMethod({
     ariaLabel: 'Shift4 Credit Card payment method',
     supports: {
         features: ['products'],
-        showSavedCards: true,
-        showSaveOption: true
+        showSavedCards: savedCardsEnabled === 'yes' ? true : false,
+        showSaveOption: savedCardsEnabled === 'yes' ? true : false
     }
 })

@@ -52,6 +52,7 @@ class WC_Shift4_Block_Support extends AbstractPaymentMethodType
             'threeDS' => $data['3ds_mode'],
             'threeDSValidationMessage' => __('3DS validation failed.', 'your-textdomain'),
             'publicKey' => $data['publicKey'],
+            'savedCardsEnabled' => $data['savedCardsEnabled'],
         ];
 
         wp_localize_script(
@@ -87,6 +88,7 @@ class WC_Shift4_Block_Support extends AbstractPaymentMethodType
             'supports'      => $gateway->supports,
             '3ds_mode'      => $gateway->settings['3ds_mode'],
             'publicKey'     => $gateway->settings['shared_public_key'],
+            'savedCardsEnabled' => $gateway->settings['saved_cards_enabled'],
         ];
     }
 }

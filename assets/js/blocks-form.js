@@ -34,14 +34,17 @@ const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }) => {
                 amount: cartTotal.value,
                 currency: currency.code
             })
-            return {
-                type: emitResponse.responseTypes.SUCCESS,
-                meta: {
-                    paymentMethodData: {
-                        ...paymentMethodDataRef.current
-                    }
-                },
+            if (paymentMethodDataRef.current) {
+                return {
+                    type: emitResponse.responseTypes.SUCCESS,
+                    meta: {
+                        paymentMethodData: {
+                            ...paymentMethodDataRef.current
+                        }
+                    },
+                }
             }
+            return emitResponse.emitResponse.ERROR
         })
         // Unsubscribes when this component is unmounted.
         return () => {
