@@ -151,7 +151,8 @@ function initShift4(blockOptions) {
     function setTokenAndContinue(token) {
         if (blockOptions) {
             blockOptions.paymentMethodDataRef.current = {
-                'shift4_card_token': token.id
+                'shift4_card_token': token.id,
+                'shift4_card_fingerprint': token.fingerprint
             }
         }
         document.getElementById('shift4_card_token').value = token.id;
