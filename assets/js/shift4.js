@@ -151,10 +151,13 @@ function initShift4(blockOptions) {
     function setTokenAndContinue(token) {
         if (blockOptions) {
             blockOptions.paymentMethodDataRef.current = {
-                'shift4_card_token': token.id
+                'shift4_card_token': token.id,
+                'shift4_card_fingerprint': token.fingerprint
             }
+        } else {
+            document.getElementById('shift4_card_token').value = token.id;
+            document.getElementById('shift4_card_fingerprint').value = token.fingerprint;
         }
-        document.getElementById('shift4_card_token').value = token.id;
         setValidationState(true);
         $checkoutForm.submit();
     }
@@ -228,6 +231,7 @@ function initShift4(blockOptions) {
     }
 
     window.shift4PaymentFormSubmit = block_paymentFormSubmit
+    window.clearError = clearError
 
     async function payWithApplePay(amount) {
         // Configure PaymentRequest method details

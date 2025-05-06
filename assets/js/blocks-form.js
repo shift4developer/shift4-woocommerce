@@ -30,6 +30,7 @@ const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }) => {
         }
         window.shift4UpdatedCheckout()
         const unsubscribe = onPaymentSetup(async () => {
+            window.clearError()
             await window.shift4PaymentFormSubmit({
                 amount: cartTotal.value,
                 currency: currency.code
@@ -44,7 +45,9 @@ const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }) => {
                     },
                 }
             }
-            return emitResponse.emitResponse.ERROR
+            return {
+                type: emitResponse.responseTypes.ERROR
+            }
         })
         // Unsubscribes when this component is unmounted.
         return () => {
@@ -78,7 +81,6 @@ const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }) => {
                     <div className="shift4-payment-input shift4-payment-cvv-input" data-shift4="cvc"></div>
                 </div>
             </div>
-            <input type="hidden" name="shift4_card_token" id="shift4_card_token" />
         </div>
     )
 }
