@@ -1,7 +1,7 @@
 {
     "name": "my-payment-gateway",
     "version": "1.0.0",
-    "description": "WooCommerce Checkout Block 的支付网关",
+    "description": "WooCommerce Checkout Block payment gateway",
     "private": true,
     "main": "build/index.js",
     "scripts": {
