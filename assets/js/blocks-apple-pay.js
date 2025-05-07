@@ -8,7 +8,6 @@ const Shift4ApplePay = ({ onClick, onClose, onSubmit, billing }) => {
     const paymentMethodDataRef = useRef(null)
 
     useEffect(() => {
-        console.log('Shift4ApplePay useEffect')
         if (!window.shift4Initialised) {
 
             const initialize = () => {
@@ -41,7 +40,6 @@ const Shift4ApplePay = ({ onClick, onClose, onSubmit, billing }) => {
     }, [])
 
     const handleClick = async () => {
-        console.log('handleClick')
 
         // taken over payment processing
         onClick()

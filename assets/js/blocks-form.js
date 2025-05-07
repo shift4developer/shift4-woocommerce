@@ -8,7 +8,6 @@ const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }) => {
     const { onPaymentSetup } = eventRegistration
 
     useEffect(() => {
-        // initialize shift4 if needed
         if (!window.shift4Initialised) {
 
             const initialize = () => {
@@ -49,7 +48,6 @@ const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }) => {
                 type: emitResponse.responseTypes.ERROR
             }
         })
-        // Unsubscribes when this component is unmounted.
         return () => {
             unsubscribe()
         }
