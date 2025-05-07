@@ -50,7 +50,7 @@ class WC_Shift4_Block_Support extends AbstractPaymentMethodType
         $shift4Config = [
             'blogName' => get_bloginfo('name'),
             'threeDS' => $data['3ds_mode'],
-            'threeDSValidationMessage' => __('3DS validation failed.', 'your-textdomain'),
+            'threeDSValidationMessage' => __('3DS validation failed.', 'shift4'),
             'publicKey' => $data['publicKey'],
             'savedCardsEnabled' => $data['savedCardsEnabled'],
         ];

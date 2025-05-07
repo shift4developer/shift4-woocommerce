@@ -3,7 +3,6 @@ import { useEffect, useRef } from '@wordpress/element'
 
 const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }) => {
     const { cartTotal, currency } = billing
-    const formRef = useRef(null)
     const paymentMethodDataRef = useRef(null)
     const { onPaymentSetup } = eventRegistration
 
@@ -58,7 +57,7 @@ const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }) => {
     ])
 
     return (
-        <div id="shift4-payment-form" ref={formRef}>
+        <div id="shift4-payment-form">
             <div className="shift4-payment-field">
                 <label className="shift4-payment-number-label">
                     Card number

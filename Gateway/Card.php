@@ -237,22 +237,20 @@ class Card extends \WC_Payment_Gateway_CC
     private function determinePaymentRequestType()
     {
         $shift4_card_fingerprint = null;
-        if(isset($_POST['shift4_card_fingerprint'])) {
+        if (isset($_POST['shift4_card_fingerprint'])) {
             $shift4_card_fingerprint = sanitize_text_field($_POST['shift4_card_fingerprint']);
         }
 
-        $user_saved_tokens = \WC_Payment_Tokens::get_customer_tokens( get_current_user_id(), 'shift4_card' );
-        $existing_token_id = null;
+        $user_saved_tokens = \WC_Payment_Tokens::get_customer_tokens(get_current_user_id(), 'shift4_card');
 
         foreach ($user_saved_tokens as $token) {
             $fingerprint = $token->get_meta('fingerprint');
             if ($fingerprint && $fingerprint === $shift4_card_fingerprint) {
-                $existing_token_id = $token->get_id();
-                $_POST['wc-shift4_card-payment-token'] = $existing_token_id;
+                $_POST['wc-shift4_card-payment-token'] = $token->get_id();
                 break;
             }
         }
-        
+
         /**
          * use existing token:
          * - wc-shift4_card-payment-token=8
@@ -270,7 +268,7 @@ class Card extends \WC_Payment_Gateway_CC
         if (isset($_POST['wc-shift4_card-payment-token']) && is_numeric($_POST['wc-shift4_card-payment-token'])) {
             return self::PAYMENT_TYPE_EXISTING_TOKEN;
         }
-        
+
         // Place order and save card scenario
         if (
             isset($_POST['wc-shift4_card-new-payment-method'])
