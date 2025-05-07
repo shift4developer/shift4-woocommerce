@@ -37,6 +37,30 @@ add_action('before_woocommerce_init', function () {
     }
 });
 
+function getCardSingleton(Container $container)
+{
+    if (!defined('SHIFT4_CARD_REGISTERED')) {
+        define('SHIFT4_CARD_REGISTERED', true);
+        $card = $container->get(Card::class);
+        $container->share(Card::class, function () use ($card) {
+            return $card;
+        });
+    }
+    return $container->get(Card::class);
+}
+
+function getApplePaySingleton(Container $container)
+{
+    if (!defined('SHIFT4_ApplePay_REGISTERED')) {
+        define('SHIFT4_ApplePay_REGISTERED', true);
+        $applePay = $container->get(ApplePay::class);
+        $container->share(ApplePay::class, function () use ($applePay) {
+            return $applePay;
+        });
+    }
+    return $container->get(ApplePay::class);
+}
+
 // Test to see if WooCommerce is active (including network activated).
 $plugin_path = trailingslashit( WP_PLUGIN_DIR ) . 'woocommerce/woocommerce.php';
 if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
@@ -55,8 +79,8 @@ if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
 
         add_filter('woocommerce_payment_gateways', function ($methods) use ($container) {
             // Load in the Gateway instance
-            $methods[] = $container->get(Card::class);
-            $methods[] = $container->get(ApplePay::class);
+            $methods[] = getCardSingleton($container);
+            $methods[] = getApplePaySingleton($container);
             return $methods;
         });
         add_action('woocommerce_blocks_payment_method_type_registration', function ($registry) use ($container) {
@@ -71,7 +95,7 @@ if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
             $block_container->register(
                 WC_Shift4_Block_Support::class,
                 function () use ($container) {
-                    return new WC_Shift4_Block_Support($container->get(Card::class));
+                    return new WC_Shift4_Block_Support(getCardSingleton($container));
                 }
             );
             $registry->register(
