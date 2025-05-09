@@ -59,6 +59,24 @@ class Card extends \WC_Payment_Gateway_CC
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
         // Register hook to add payment card network icons to saved card entries
         add_filter('woocommerce_payment_gateway_get_saved_payment_method_option_html', [$this, 'addCardNetworkIconToSavedCards'], 10, 2);
+
+        // Register hook. If merchant does not want tokenization, filter the saved cards for checkout block page.
+        add_filter('woocommerce_saved_payment_methods_list', function ($methods) {
+            if (!wc_string_to_bool($this->settings['saved_cards_enabled'])) {
+                // Filter all the payment methods ('cc' is the real target)
+                foreach ($methods as $type => $tokens) {
+                    // Filter all tokenization which method.gateway is shift4_card
+                    $methods[$type] = array_filter($tokens, function ($token) {
+                        return isset($token['method']['gateway']) && $token['method']['gateway'] !== self::ID;
+                    });
+                    // Remove the payment method if it's empty
+                    if (empty($methods[$type])) {
+                        unset($methods[$type]);
+                    }
+                }
+            }
+            return $methods;
+        }, 10, 2);
     }
 
     // These are options you’ll show in admin on your gateway settings page and make use of the WC Settings API.
