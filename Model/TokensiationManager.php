@@ -53,6 +53,7 @@ class TokensiationManager
         $token->set_expiry_year($card->getExpYear());
         $token->set_expiry_month($card->getExpMonth());
         $token->set_user_id($user->ID);
+        $token->add_meta_data('fingerprint', $card->getFingerprint(), true);
         return $token->save();
     }
 }

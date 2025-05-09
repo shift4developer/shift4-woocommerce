@@ -31,6 +31,7 @@
         </div>
     </div>
     <input type="hidden" name="shift4_card_token" id="shift4_card_token"/>
+    <input type="hidden" name="shift4_card_fingerprint" id="shift4_card_fingerprint"/>
     <script>
         if (!window.shift4Initialised) {
             window.shift4Config = <?= json_encode($shift4Config) ?>;

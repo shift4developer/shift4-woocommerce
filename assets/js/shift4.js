@@ -11,7 +11,8 @@ const errorComponent = `
 const shift4FormSelector = '#shift4-payment-form';
 const shift4ErrorSelector = '#shift4-payment-error';
 
-function initShift4() {
+function initShift4(blockOptions) {
+
     if (!window.shift4Config) {
         console.error('Shift4 payment gateway not configured');
         return;
@@ -21,21 +22,27 @@ function initShift4() {
     const $checkoutForm = $('form.woocommerce-checkout, #order_review, #add_payment_method');
     const shift4 = window.Shift4(window.shift4Config.publicKey);
     let components;
-    $('body').on('updated_checkout', function () {
+
+    function updatedCheckout() {
         // Create components to securely collect sensitive payment data
         try {
             const isInitialzed = $('[data-shift4="number"]').children().size() > 0;
-            
-            if (!isInitialzed) { 
+
+            if (!isInitialzed) {
                 components = shift4.createComponentGroup().automount(shift4FormSelector);
             }
         } catch (err) {
             // When WC checkout initializes it reloads the payment section so catch any missing DOM errors
         }
+    }
+    window.shift4UpdatedCheckout = updatedCheckout
+
+    $('body').on('updated_checkout', function () {
+        updatedCheckout()
     });
 
     // Listen for Shift4 post-messages to automatically select "new" option when user clicks the card form
-    window.addEventListener('message', function(event) {
+    window.addEventListener('message', function (event) {
         if (event.origin === 'https://js.dev.shift4.com') {
             $(':input.woocommerce-SavedPaymentMethods-tokenInput').trigger('click');
         }
@@ -142,7 +149,15 @@ function initShift4() {
     }
 
     function setTokenAndContinue(token) {
-        document.getElementById('shift4_card_token').value = token.id;
+        if (blockOptions) {
+            blockOptions.paymentMethodDataRef.current = {
+                'shift4_card_token': token.id,
+                'shift4_card_fingerprint': token.fingerprint
+            }
+        } else {
+            document.getElementById('shift4_card_token').value = token.id;
+            document.getElementById('shift4_card_fingerprint').value = token.fingerprint;
+        }
         setValidationState(true);
         $checkoutForm.submit();
     }
@@ -172,6 +187,84 @@ function initShift4() {
         const $errorMessage = $(shift4ErrorSelector);
         $errorMessage.addClass('hidden');
     }
+
+    /**
+     * paymentFormSubmit edition for checkout block
+     * 
+     * @param {Object} params params amount number and currency code return by woocommerce in Shift4PaymentForm
+     */
+    async function block_paymentFormSubmit(params) {
+        try {
+            const token = await shift4.createToken(components)
+            await handleTokenCreated(token, {
+                ...params,
+                card: token.id
+            })
+        } catch (error) {
+            errorCallback(error)
+        }
+    }
+
+    /**
+     * tokenCreatedCallback edition for checkout block
+     * 
+     * @param request request params for threeDS
+     * 
+     * @example
+     * const request = {
+     *   amount: 900,
+     *   currency: 'HKD',
+     *   card: token.id,
+     * }
+     */
+    async function handleTokenCreated(token, request) {
+        if (['strict', 'frictionless'].includes(window.shift4Config.threeDS)) {
+            try {
+                const result = await shift4.verifyThreeDSecure(request)
+                threeDSecureCompletedCallback(result)
+            } catch (error) {
+                errorCallback(error);
+            }
+        } else {
+            setTokenAndContinue(token)
+        }
+    }
+
+    window.shift4PaymentFormSubmit = block_paymentFormSubmit
+    window.clearError = clearError
+
+    async function payWithApplePay(amount) {
+        // Configure PaymentRequest method details
+        const applePayMethodData = {
+            supportedMethods: 'https://apple.com/apple-pay',
+            data: {
+                countryCode: 'GB',
+                supportedNetworks: [
+                    'amex',
+                    'discover',
+                    'masterCard',
+                    'visa',
+                ],
+            },
+        }
+        const shoppingCartDetails = {
+            total: {
+                label: window.shift4Config.blogName,
+                amount
+            },
+        }
+
+        const paymentRequest = shift4.createPaymentRequest([applePayMethodData], shoppingCartDetails)
+        try {
+            const result = await paymentRequest.show()
+            const applePayToken = result.details.token.paymentData
+            return applePayToken
+        } catch (error) {
+            errorCallback(error)
+        }
+    }
+
+    window.shift4PayWithApplePay = payWithApplePay
 }
 const event = new Event("shift4JsLoaded");
 document.dispatchEvent(event);
