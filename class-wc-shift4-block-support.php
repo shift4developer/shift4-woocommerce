@@ -48,8 +48,9 @@ class WC_Shift4_Block_Support extends AbstractPaymentMethodType
 
         $data = $this->get_payment_method_data();
         $shift4Config = [
+            'cardTitle' => $data['cardTitle'],
             'blogName' => get_bloginfo('name'),
-            'threeDS' => $data['3ds_mode'],
+            'threeDS' => $data['3dsMode'],
             'threeDSValidationMessage' => __('3DS validation failed.', 'shift4'),
             'publicKey' => $data['publicKey'],
             'savedCardsEnabled' => $data['savedCardsEnabled'],
@@ -81,14 +82,12 @@ class WC_Shift4_Block_Support extends AbstractPaymentMethodType
      */
     public function get_payment_method_data()
     {
-        $gateway = $this->cardGateway;
+        $cardGateway = $this->cardGateway;
         return [
-            'title'         => $gateway->method_title,
-            'description'   => $gateway->method_description,
-            'supports'      => $gateway->supports,
-            '3ds_mode'      => $gateway->settings['3ds_mode'],
-            'publicKey'     => $gateway->settings['shared_public_key'],
-            'savedCardsEnabled' => $gateway->settings['saved_cards_enabled'],
+            'cardTitle'         => $cardGateway->settings['title'],
+            '3dsMode'           => $cardGateway->settings['3ds_mode'],
+            'publicKey'         => $cardGateway->settings['shared_public_key'],
+            'savedCardsEnabled' => $cardGateway->settings['saved_cards_enabled'],
         ];
     }
 }

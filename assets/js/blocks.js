@@ -1,7 +1,7 @@
 const { registerPaymentMethod } = window.wc.wcBlocksRegistry
 // const { registerExpressPaymentMethod } = window.wc.wcBlocksRegistry
 const { createElement } = window.wp.element
-const { savedCardsEnabled } = window.shift4Config
+const { cardTitle, savedCardsEnabled } = window.shift4Config
 
 import React from 'react'
 import Shift4PaymentForm from './blocks-form'
@@ -21,7 +21,7 @@ import Shift4PaymentForm from './blocks-form'
 // Register Shift4 Credit Card.
 registerPaymentMethod({
     name: 'shift4_card',
-    label: 'Credit Card (Shift4)',
+    label: cardTitle,
     content: <Shift4PaymentForm />,
     edit: <p>Credit Card (Shift4)'</p>,
     canMakePayment: () => true,
