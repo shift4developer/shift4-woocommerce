@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Shift4\WooCommerce\Gateway;
 
@@ -57,9 +59,28 @@ class Card extends \WC_Payment_Gateway_CC
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
         // Register hook to add payment card network icons to saved card entries
         add_filter('woocommerce_payment_gateway_get_saved_payment_method_option_html', [$this, 'addCardNetworkIconToSavedCards'], 10, 2);
+
+        // Register hook. If merchant does not want tokenization, filter the saved cards for checkout block page.
+        add_filter('woocommerce_saved_payment_methods_list', function ($methods) {
+            if (!wc_string_to_bool($this->settings['saved_cards_enabled'])) {
+                // Filter all the payment methods ('cc' is the real target)
+                foreach ($methods as $type => $tokens) {
+                    // Filter all tokenization which method.gateway is shift4_card
+                    $methods[$type] = array_filter($tokens, function ($token) {
+                        return isset($token['method']['gateway']) && $token['method']['gateway'] !== self::ID;
+                    });
+                    // Remove the payment method if it's empty
+                    if (empty($methods[$type])) {
+                        unset($methods[$type]);
+                    }
+                }
+            }
+            return $methods;
+        }, 10, 2);
     }
 
-     public function init_form_fields()
+    // These are options you’ll show in admin on your gateway settings page and make use of the WC Settings API.
+    public function init_form_fields()
     {
         return [
             'method_header' => [
@@ -187,11 +208,10 @@ class Card extends \WC_Payment_Gateway_CC
             throw new \Exception(
                 __(
                     'Sorry, we were unable to process your payment. ' .
-                    'Please check your card details are correct or try using a different payment method.',
+                        'Please check your card details are correct or try using a different payment method.',
                     'shift4'
                 )
             );
-
         }
     }
 
@@ -234,6 +254,21 @@ class Card extends \WC_Payment_Gateway_CC
 
     private function determinePaymentRequestType()
     {
+        $shift4_card_fingerprint = null;
+        if (isset($_POST['shift4_card_fingerprint'])) {
+            $shift4_card_fingerprint = sanitize_text_field($_POST['shift4_card_fingerprint']);
+        }
+
+        $user_saved_tokens = \WC_Payment_Tokens::get_customer_tokens(get_current_user_id(), 'shift4_card');
+
+        foreach ($user_saved_tokens as $token) {
+            $fingerprint = $token->get_meta('fingerprint');
+            if ($fingerprint && $fingerprint === $shift4_card_fingerprint) {
+                $_POST['wc-shift4_card-payment-token'] = $token->get_id();
+                break;
+            }
+        }
+
         /**
          * use existing token:
          * - wc-shift4_card-payment-token=8
@@ -247,16 +282,20 @@ class Card extends \WC_Payment_Gateway_CC
          * wc-shift4_card-payment-token=new
          * - shift4_card_token=sometoken
          */
-        // Place order and save card scenario
-        if (isset($_POST['wc-shift4_card-new-payment-method'])
-            && $_POST['wc-shift4_card-new-payment-method'] === 'true'
-        ) {
-            return self::PAYMENT_TYPE_SAVE_CARD;
-        }
-
         // Use saved token scenario
         if (isset($_POST['wc-shift4_card-payment-token']) && is_numeric($_POST['wc-shift4_card-payment-token'])) {
             return self::PAYMENT_TYPE_EXISTING_TOKEN;
+        }
+
+        // Place order and save card scenario
+        if (
+            isset($_POST['wc-shift4_card-new-payment-method'])
+            && (
+                $_POST['wc-shift4_card-new-payment-method'] === 'true'
+                || ($_POST['wc-shift4_card-new-payment-method'] === '1')
+            )
+        ) {
+            return self::PAYMENT_TYPE_SAVE_CARD;
         }
 
         // Other scenarios didn't match so assume new card but don't save
@@ -283,7 +322,7 @@ class Card extends \WC_Payment_Gateway_CC
 
     public function addCardNetworkIconToSavedCards($html, $token)
     {
-        $iconUrl = match($token->get_card_type()) {
+        $iconUrl = match ($token->get_card_type()) {
             'Visa' => 'https://js.securionpay.com/6ab079a7/v2/img/visa.svg',
             'Maestro',
             'MasterCard' => 'https://js.securionpay.com/6ab079a7/v2/img/mastercard.svg',
