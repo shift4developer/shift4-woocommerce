@@ -22,8 +22,6 @@ test('shop', async ({ page }) => {
     await page.fill('#shipping-first_name', 'F')
     await page.fill('#shipping-last_name', 'L')
     await page.fill('#shipping-address_1', 'A')
-    await page.fill('#shipping-address_2', 'Ase')
-    await page.fill('#shipping-city', 'TD')
     await page.fill('#shipping-city', 'TD')
     await page.fill('#shipping-postcode', 'PC')
     await page.fill('#shipping-phone', 'P')
