@@ -5,16 +5,17 @@
     "private": true,
     "main": "build/index.js",
     "scripts": {
-      "build": "wp-scripts build",
-      "start": "wp-scripts start"
+        "build": "wp-scripts build",
+        "start": "wp-scripts start"
     },
     "devDependencies": {
-      "@wordpress/scripts": "^20.0.0",
-      "@wordpress/babel-preset-default": "^8.0.0"
+        "@wordpress/babel-preset-default": "^8.0.0",
+        "@wordpress/scripts": "^20.0.0",
+        "cypress": "^14.3.3",
+        "cypress-iframe": "^1.0.1"
     },
     "dependencies": {
-      "react": "^18.0.0",
-      "react-dom": "^18.0.0"
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0"
     }
-  }
-  
+}
