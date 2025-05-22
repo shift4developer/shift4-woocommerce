@@ -1,4 +1,3 @@
-import React from 'react'
 import { useEffect, useRef } from '@wordpress/element'
 
 const Shift4ApplePay = ({ onClick, onClose, onSubmit, billing }) => {
@@ -46,7 +45,7 @@ const Shift4ApplePay = ({ onClick, onClose, onSubmit, billing }) => {
 
         try {
             const applePayToken = await window.shift4PayWithApplePay({
-                value: cartTotal.value,
+                value: (cartTotal.value / Math.pow(10, currency.minorUnit)).toFixed(currency.minorUnit),
                 currency: currency.code
             })
 
