@@ -1,20 +1,21 @@
 import React from 'react'
 import { useEffect, useRef } from '@wordpress/element'
+import { RegisterPaymentMethodContentProps } from './RegisterPaymentMethodContentProps'
 
-const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }) => {
+export const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }: RegisterPaymentMethodContentProps) => {
     const { cartTotal, currency } = billing
-    const paymentMethodDataRef = useRef(null)
+    const paymentMethodDataRef = useRef<{} | null>(null)
     const { onPaymentSetup } = eventRegistration
 
     useEffect(() => {
         if (!window.shift4Initialised) {
 
             const initialize = () => {
-                if (typeof initShift4 === 'function') {
+                if (typeof window.initShift4 === 'function') {
                     const blockOptions = {
                         paymentMethodDataRef
                     }
-                    initShift4(blockOptions)
+                    window.initShift4(blockOptions)
                     window.shift4Initialised = true
                     window.shift4UpdatedCheckout()
                 }
@@ -81,5 +82,3 @@ const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }) => {
         </div>
     )
 }
-
-export default Shift4PaymentForm
