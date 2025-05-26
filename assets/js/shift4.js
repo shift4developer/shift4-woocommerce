@@ -202,6 +202,7 @@ function initShift4(blockOptions) {
             })
         } catch (error) {
             errorCallback(error)
+            throw error
         }
     }
 
@@ -261,6 +262,7 @@ function initShift4(blockOptions) {
             return applePayToken
         } catch (error) {
             errorCallback(error)
+            throw error
         }
     }
 
