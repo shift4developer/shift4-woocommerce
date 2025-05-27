@@ -1,22 +1,20 @@
 const { registerPaymentMethod } = window.wc.wcBlocksRegistry
-// const { registerExpressPaymentMethod } = window.wc.wcBlocksRegistry
-const { createElement } = window.wp.element
+const { registerExpressPaymentMethod } = window.wc.wcBlocksRegistry
 const { cardTitle, savedCardsEnabled } = window.shift4Config
 
-import React from 'react'
 import Shift4PaymentForm from './blocks-form'
-// import Shift4ApplePay from './blocks-apple-pay'
+import Shift4ApplePay from './blocks-apple-pay'
 
 // Register Shift4 Apple Pay.
-// registerExpressPaymentMethod({
-//     name: 'shift4_applepay',
-//     label: 'Apple Pay (Shift4)',
-//     edit: <p>Apple Pay (Shift4)</p>,
-//     content: <Shift4ApplePay />,
-//     canMakePayment: () => {
-//         return !!(window.ApplePaySession && window.ApplePaySession.canMakePayments())
-//     }
-// })
+registerExpressPaymentMethod({
+    name: 'shift4_applepay',
+    label: 'Apple Pay (Shift4)',
+    edit: <p>Apple Pay (Shift4)</p>,
+    content: <Shift4ApplePay />,
+    canMakePayment: () => {
+        return !!(window.ApplePaySession && window.ApplePaySession.canMakePayments())
+    }
+})
 
 // Register Shift4 Credit Card.
 registerPaymentMethod({

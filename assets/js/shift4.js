@@ -202,6 +202,7 @@ function initShift4(blockOptions) {
             })
         } catch (error) {
             errorCallback(error)
+            throw error
         }
     }
 
@@ -258,9 +259,15 @@ function initShift4(blockOptions) {
         try {
             const result = await paymentRequest.show()
             const applePayToken = result.details.token.paymentData
+            if (!applePayToken) {
+                console.warn('Apple Pay Failed')
+                console.log('Apple Pay result: ', result)
+                throw new Error('Apple Pay Failed.')
+            }
             return applePayToken
         } catch (error) {
             errorCallback(error)
+            throw error
         }
     }
 
