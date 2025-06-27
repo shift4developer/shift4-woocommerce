@@ -1,17 +1,24 @@
-
 const path = require('path');
 
 module.exports = {
-    entry: './assets/js/blocks.js',
+    entry: './assets/js/blocks.tsx',
     output: {
         path: path.resolve(__dirname, 'build'),
         filename: 'index.js',
     },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'], // Dodaj .ts i .tsx
+    },
     module: {
         rules: [
             {
-                test: /\.js$/,
-                use: 'babel-loader',
+                test: /\.(js|ts|tsx)$/, // Obsługuj js, ts, tsx
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@wordpress/babel-preset-default'], // Babel preset z WP
+                    },
+                },
                 exclude: /node_modules/,
             },
         ],
@@ -24,3 +31,4 @@ module.exports = {
         '@woocommerce/blocks-registry': ['wc', 'blocksRegistry'],
     },
 };
+

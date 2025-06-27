@@ -97,7 +97,7 @@ function initShift4(blockOptions) {
     }
 
     function tokenCreatedCallback(token) {
-        if (['strict', 'frictionless'].includes(window.shift4Config.threeDS)) {
+        if (['strict', 'frictionless'].includes(window.shift4CardSettings.threeDS)) {
             const $shift4Form = $(shift4FormSelector);
             var request = {
                 amount: $shift4Form.data('amount'),
@@ -126,7 +126,7 @@ function initShift4(blockOptions) {
     }
 
     function threeDSecureCompletedCallback(token) {
-        switch (window.shift4Config.threeDS) {
+        switch (window.shift4CardSettings.threeDS) {
             case 'disabled':
                 setTokenAndContinue(token);
                 break;
@@ -202,6 +202,7 @@ function initShift4(blockOptions) {
             })
         } catch (error) {
             errorCallback(error)
+            throw error
         }
     }
 
@@ -218,7 +219,7 @@ function initShift4(blockOptions) {
      * }
      */
     async function handleTokenCreated(token, request) {
-        if (['strict', 'frictionless'].includes(window.shift4Config.threeDS)) {
+        if (['strict', 'frictionless'].includes(window.shift4CardSettings.threeDS)) {
             try {
                 const result = await shift4.verifyThreeDSecure(request)
                 threeDSecureCompletedCallback(result)
@@ -234,6 +235,7 @@ function initShift4(blockOptions) {
     window.clearError = clearError
 
     async function payWithApplePay(amount) {
+        console.log('Initializing Apple Pay payment...', amount);
         // Configure PaymentRequest method details
         const applePayMethodData = {
             supportedMethods: 'https://apple.com/apple-pay',
@@ -254,18 +256,18 @@ function initShift4(blockOptions) {
             },
         }
 
-        const paymentRequest = shift4.createPaymentRequest([applePayMethodData], shoppingCartDetails)
+        const paymentRequest = shift4.createPaymentRequest([applePayMethodData], shoppingCartDetails);
         try {
-            const result = await paymentRequest.show()
-            const applePayToken = result.details.token.paymentData
-            return applePayToken
+            return await paymentRequest.show()
         } catch (error) {
             errorCallback(error)
+            throw error
         }
     }
 
     window.shift4PayWithApplePay = payWithApplePay
 }
+window.initShift4 = initShift4;
 const event = new Event("shift4JsLoaded");
 document.dispatchEvent(event);
 window.shift4JsLoaded = true;
