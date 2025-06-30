@@ -7,7 +7,7 @@ const { validationStore } = window.wc.wcBlocksData;
 export const Shift4ApplePay = (props: RegisterPaymentMethodContentProps) => {
     if (!props) return null;
     const { activePaymentMethod, billing, emitResponse, eventRegistration, onSubmit, onClose } = props
-    const { onPaymentSetup, onCheckoutFail, onCheckoutSuccess, onCheckoutValidation } = eventRegistration
+    const { onPaymentSetup, onCheckoutFail, onCheckoutSuccess } = eventRegistration
     if (!billing) return null;
     const tokenInputRef = useRef<HTMLInputElement | null>(null)
     const buttonRef = useRef<HTMLButtonElement | null>(null)
@@ -20,8 +20,7 @@ export const Shift4ApplePay = (props: RegisterPaymentMethodContentProps) => {
         if (!window.shift4Initialised) {
             const initialize = () => {
                 if (typeof window.initShift4 === 'function') {
-                    const blockOptions = {};
-                    window.initShift4(blockOptions)
+                    window.initShift4({});
                     window.shift4Initialised = true
                 }
             }
@@ -46,6 +45,9 @@ export const Shift4ApplePay = (props: RegisterPaymentMethodContentProps) => {
     }, [])
 
     const handlePayWithApplePay = async () => {
+        if (!cartTotal.value) {
+            return null;
+        }
         const paymentResponse = await window.shift4PayWithApplePay({
             value: (cartTotal.value / Math.pow(10, currency.minorUnit)).toFixed(currency.minorUnit),
             currency: currency.code
@@ -79,7 +81,9 @@ export const Shift4ApplePay = (props: RegisterPaymentMethodContentProps) => {
             } catch (ex) {
                 const error = ex instanceof Error ? ex : new Error('An unknown error occurred while processing the payment.');
                 onClose()
-                paymentResponseRef.current.complete('fail');
+                if (paymentResponseRef.current) {
+                    paymentResponseRef.current.complete('fail');
+                }
                 return {
                     type: emitResponse.responseTypes.ERROR,
                     message: error.message || 'An error occurred while processing the payment.'
@@ -104,7 +108,7 @@ export const Shift4ApplePay = (props: RegisterPaymentMethodContentProps) => {
             unsubscribeCheckoutFail();
             unsubscribePaymentSetup();
         }
-    }, [onCheckoutFail, onCheckoutSuccess, onCheckoutValidation, onPaymentSetup, emitResponse.responseTypes.ERROR, emitResponse.responseTypes.SUCCESS, onClose])
+    }, [onCheckoutFail, onCheckoutSuccess, onPaymentSetup, emitResponse.responseTypes.ERROR, emitResponse.responseTypes.SUCCESS, onClose])
 
     useEffect(() => {
         const subtmitButton = document.querySelector<HTMLButtonElement>('button.wc-block-components-checkout-place-order-button');

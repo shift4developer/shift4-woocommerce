@@ -37,10 +37,10 @@ export interface RegisterPaymentMethodContentProps {
         }
     };
     components: {
-    LoadingMask: React.FunctionComponent;
-    PaymentMethodIcons: React.FunctionComponent;
-    PaymentMethodLabel: React.FunctionComponent;
-    ValidationInputError: React.FunctionComponent;
+        LoadingMask: React.FunctionComponent;
+        PaymentMethodIcons: React.FunctionComponent;
+        PaymentMethodLabel: React.FunctionComponent;
+        ValidationInputError: React.FunctionComponent;
     };
     emitResponse: {
         noticeContexts: typeof NoticeContexts;
@@ -56,7 +56,7 @@ export interface RegisterPaymentMethodContentProps {
         onCheckoutValidationBeforeProcessing: () => () => void;
         onPaymentProcessing: () => () => void;
         onPaymentSetup: (
-            setup: () => Promise<{ type: ResponseTypes; meta?: { paymentMethodData: any; }; message?: string; } | void>
+            setup: () => Promise<{ type: ResponseTypes; meta?: { paymentMethodData: unknown; }; message?: string; } | void>
         ) => () => void;
         onShippingRateFail: () => () => void;
         onShippingRateSelectFail: () => () => void;
@@ -65,5 +65,5 @@ export interface RegisterPaymentMethodContentProps {
     };
     onSubmit: () => void;
     onClose: () => void;
-    setExpressPaymentError: (error: any) => void;
+    setExpressPaymentError: (error: Error) => void;
 }
