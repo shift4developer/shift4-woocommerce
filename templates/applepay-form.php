@@ -13,12 +13,12 @@ $formId = uniqid('applepayForm_');
     //<!--
     $ = jQuery;
     $(function () {
-        const <?= $formId ?> = $('form.woocommerce-checkout, #order_review, #add_payment_method');
+        const <?php echo esc_html($formId); ?> = $('form.woocommerce-checkout, #order_review, #add_payment_method');
         $(document.body).on('payment_method_selected', function(e) {
             const selected = document.querySelector('input[name="payment_method"]:checked').value;
             document.getElementById('place_order').style.visibility = (selected === 'shift4_applepay') ? 'hidden' : 'visible';
         });
-        var shift4 = Shift4('<?= $publicKey ?>');
+        var shift4 = Shift4('<?php echo esc_html($publicKey); ?>');
         if (window.ApplePaySession && window.ApplePaySession.canMakePayments() && window.PaymentRequest) {
             $("#apple-pay-submit-button").click(payWithApplePay);
         } else {
@@ -42,10 +42,10 @@ $formId = uniqid('applepayForm_');
             // Configure details of shopping cart details
             const shoppingCartDetails = {
                 total: {
-                    label: '<?= get_bloginfo('name') ?>',
+                    label: '<?php echo esc_html(get_bloginfo('name')); ?>',
                     amount: {
-                        currency: '<?= get_woocommerce_currency() ?>',
-                        value: '<?= $orderTotal ?>',
+                        currency: '<?php echo esc_html(get_woocommerce_currency()); ?>',
+                        value: '<?php echo esc_html($orderTotal); ?>',
                     }
                 },
             };
@@ -61,7 +61,7 @@ $formId = uniqid('applepayForm_');
         function createCharge(paymentResponse) {
             const request = paymentResponse.details.token.paymentData;
             document.getElementById('shift4_applepay_token').value = JSON.stringify(request);
-            <?= $formId ?>.submit()
+            <?php echo esc_html($formId); ?>.submit()
             paymentResponse.complete('success')
         }
         function displayError(err) {

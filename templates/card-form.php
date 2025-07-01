@@ -1,7 +1,7 @@
 <?php defined('ABSPATH') or exit ?>
 <div id="shift4-payment-form"
-    data-amount="<?= $orderTotal ?>"
-    data-currency="<?= get_woocommerce_currency() ?>">
+    data-amount="<?php echo esc_html($orderTotal); ?>"
+    data-currency="<?php echo esc_html(get_woocommerce_currency()); ?>">
     <div id="shift4-payment-error" class="woocommerce-NoticeGroup hidden">
         <div class="wc-block-components-notice-banner is-error" role="alert">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
@@ -12,20 +12,20 @@
     </div>
     <div class="shift4-payment-field">
         <label class="shift4-payment-number-label">
-            <?= __('Card number') ?>
+            <?php echo esc_html(__('Card number', 'shift4-for-woocommerce')); ?>
         </label>
         <div class="shift4-payment-input shift4-payment-number-input" data-shift4="number"></div>
     </div>
     <div class="shift4-payment-fields">
         <div class="shift4-payment-field">
             <label class="shift4-payment-expiry-label">
-                <?= __('Expiration') ?>
+                <?php echo esc_html(__('Expiration', 'shift4-for-woocommerce')); ?>
             </label>
             <div class="shift4-payment-input shift4-payment-expiry-input" data-shift4="expiry"></div>
         </div>
         <div class="shift4-payment-field">
             <label class="shift4-payment-cvv-label">
-                <?= __('Cvv') ?>
+                <?php echo esc_html(__('Cvv', 'shift4-for-woocommerce')); ?>
             </label>
             <div class="shift4-payment-input shift4-payment-cvv-input" data-shift4="cvc"></div>
         </div>
@@ -34,7 +34,7 @@
     <input type="hidden" name="shift4_card_fingerprint" id="shift4_card_fingerprint"/>
     <script>
         if (!window.shift4Initialised) {
-            window.shift4Config = <?= json_encode($shift4Config) ?>;
+            window.shift4Config = <?php echo json_encode($shift4Config); ?>;
             if (window.shift4JsLoaded) {
                 initShift4();
                 window.shift4Initialised = true;

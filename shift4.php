@@ -1,11 +1,14 @@
 <?php
 /*
- * Plugin Name: Shift4
+ * Plugin Name: Shift4 for WooCommerce
  * Description: WooCommerce payments via the Shift4 platform
- * Version: 1.0.4
+ * Version: 1.0.6
  * Plugin URI: https://dev.shift4.com/docs/plugins/woo-commerce/
  * Author: Shift4
- * Text Domain: shift4
+ * Author URI: https://shift4.com/
+ * License: GPL v2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: shift4-for-woocommerce
  * Requires PHP: 8.0
  * WC tested up to: 8.4.0
  */
@@ -106,12 +109,16 @@ if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
             wp_enqueue_script(
                 'shift4-js-client',
                 'https://js.dev.shift4.com/shift4.js',
+                [],
+                SHIFT4_BUILD_HASH,
+                false
             );
             wp_enqueue_script(
                 'shift4-js',
                 plugins_url('/assets/js/shift4.js', __FILE__),
                 ['jquery'],
                 SHIFT4_BUILD_HASH,
+                false
             );
         });
         add_action('wp_head', function() {
