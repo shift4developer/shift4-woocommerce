@@ -85,23 +85,23 @@ class Card extends \WC_Payment_Gateway_CC
         return [
             'method_header' => [
                 'type' => 'shift4_config_section',
-                'title' => __('Shift4 Card Payments Configuration', 'shift4'),
+                'title' => __('Shift4 Card Payments Configuration', 'shift4-for-woocommerce'),
             ],
             'enabled' => [
-                'title' => __('Enable/Disable', 'shift4'),
+                'title' => __('Enable/Disable', 'shift4-for-woocommerce'),
                 'type' => 'checkbox',
-                'label' => __('Enable Card Payments', 'shift4'),
+                'label' => __('Enable Card Payments', 'shift4-for-woocommerce'),
                 'default' => 'no'
             ],
             'title' => [
-                'title' => __('Title', 'shift4'),
+                'title' => __('Title', 'shift4-for-woocommerce'),
                 'type' => 'text',
-                'description' => __('This controls the title which the user sees during checkout.', 'shift4'),
-                'default' => __('Card Payment', 'shift4'),
+                'description' => __('This controls the title which the user sees during checkout.', 'shift4-for-woocommerce'),
+                'default' => __('Card Payment', 'shift4-for-woocommerce'),
                 'desc_tip' => true,
             ],
             '3ds_mode' => [
-                'title' => __('3DS Mode', 'shift4'),
+                'title' => __('3DS Mode', 'shift4-for-woocommerce'),
                 'type' => 'select',
                 'description' => ThreeDSecureSource::getDescription(),
                 'desc_tip' => true,
@@ -109,9 +109,9 @@ class Card extends \WC_Payment_Gateway_CC
                 'options' => ThreeDSecureSource::options(),
             ],
             'saved_cards_enabled' => [
-                'title' => __('Card Vaulting', 'shift4'),
+                'title' => __('Card Vaulting', 'shift4-for-woocommerce'),
                 'type' => 'checkbox',
-                'label' => __('Enable Saved Cards', 'shift4'),
+                'label' => __('Enable Saved Cards', 'shift4-for-woocommerce'),
                 'default' => 'yes'
             ],
         ];
@@ -121,7 +121,7 @@ class Card extends \WC_Payment_Gateway_CC
     {
         $shift4Config = [
             'threeDS' => $this->threeDSecureMode(),
-            'threeDSValidationMessage' =>  __('3DS validation failed.'),
+            'threeDSValidationMessage' =>  __('3DS validation failed.', 'shift4-for-woocommerce'),
             'publicKey' => $this->getPublicKey(),
             'componentNeedsTriggering' => is_checkout_pay_page() || is_add_payment_method_page(),
         ];
@@ -206,10 +206,11 @@ class Card extends \WC_Payment_Gateway_CC
                 [$chargeRequest, $e]
             );
             throw new \Exception(
-                __(
-                    'Sorry, we were unable to process your payment. ' .
-                        'Please check your card details are correct or try using a different payment method.',
-                    'shift4'
+                esc_html(
+                    __(
+                        'Sorry, we were unable to process your payment. Please check your card details are correct or try using a different payment method.',
+                        'shift4-for-woocommerce'
+                    )
                 )
             );
         }
@@ -337,10 +338,11 @@ class Card extends \WC_Payment_Gateway_CC
             return $html;
         }
         return sprintf(
+            // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
             '%s<img src="%s" width="28px" height="18px" alt="%s"> %s',
             $matches[1],
-            $iconUrl,
-            $token->get_card_type() . ' icon',
+            esc_url($iconUrl),
+            esc_attr($token->get_card_type() . ' icon'),
             $matches[2],
         );
     }
