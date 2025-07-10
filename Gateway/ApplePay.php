@@ -53,16 +53,16 @@ class ApplePay extends \WC_Payment_Gateway
                 'title' => 'Shift4 ApplePay Payments Configuration',
             ],
             'enabled' => [
-                'title' => __('Enable/Disable', 'shift4'),
+                'title' => __('Enable/Disable', 'shift4-for-woocommerce'),
                 'type' => 'checkbox',
-                'label' => __('Enable ApplePay', 'shift4'),
+                'label' => __('Enable ApplePay', 'shift4-for-woocommerce'),
                 'default' => 'no'
             ],
             'title' => [
-                'title' => __('Title', 'shift4'),
+                'title' => __('Title', 'shift4-for-woocommerce'),
                 'type' => 'text',
-                'description' => __('This controls the title which the user sees during checkout.', 'shift4'),
-                'default' => __('ApplePay', 'shift4'),
+                'description' => __('This controls the title which the user sees during checkout.', 'shift4-for-woocommerce'),
+                'default' => __('ApplePay', 'shift4-for-woocommerce'),
                 'desc_tip' => true,
             ],
         ];
@@ -73,10 +73,16 @@ class ApplePay extends \WC_Payment_Gateway
         wp_enqueue_script(
             'shift4-js-client',
             'https://js.dev.shift4.com/shift4.js',
+            [],
+            SHIFT4_BUILD_HASH,
+            false
         );
         wp_enqueue_script(
             'applepay-button-client',
-            'https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js'
+            'https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js',
+            [],
+            SHIFT4_BUILD_HASH,
+            false
         );
         wc_get_template(
             'applepay-form.php',
@@ -136,10 +142,11 @@ class ApplePay extends \WC_Payment_Gateway
                 [$chargeRequest, $e]
             );
             throw new \Exception(
-                __(
-                    'Sorry, we were unable to process your payment. ' .
-                    'Please check your card details are correct or try using a different payment method.',
-                    'shift4'
+                esc_html(
+                    __(
+                        'Sorry, we were unable to process your payment. Please check your card details are correct or try using a different payment method.',
+                        'shift4-for-woocommerce'
+                    )
                 )
             );
 

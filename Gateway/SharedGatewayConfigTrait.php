@@ -72,11 +72,9 @@ trait SharedGatewayConfigTrait
         if (!$text) {
             return;
         }
-        return <<<HTML
-</table>
-<h3 class="wc-settings-sub-title" style="text-decoration: underline">$text</h3>
-<table class="form-table">
-HTML;
+        return '</table>
+<h3 class="wc-settings-sub-title" style="text-decoration: underline">' . esc_html($text) . '</h3>
+<table class="form-table">';
     }
 
     public function getSharedFields()
@@ -84,27 +82,27 @@ HTML;
         return [
             'shared_header' => [
                 'type' => 'shift4_config_section',
-                'title' => __('Shift4 Shared Configuration', 'shift4'),
+                'title' => __('Shift4 Shared Configuration', 'shift4-for-woocommerce'),
             ],
             'shared_public_key' => [
-                'title' => __('Public Key', 'shift4'),
+                'title' => __('Public Key', 'shift4-for-woocommerce'),
                 'type' => 'text',
             ],
             'shared_secret_key' => [
-                'title' => __('Secret Key', 'shift4'),
+                'title' => __('Secret Key', 'shift4-for-woocommerce'),
                 'type' => 'password',
             ],
             'capture_strategy' => [
-                'title' => __('Capture Strategy', 'shift4'),
+                'title' => __('Capture Strategy', 'shift4-for-woocommerce'),
                 'type' => 'select',
-                'desc_tip' => __('Automatically capture or authorise only, capturing later', 'shift4'),
+                'desc_tip' => __('Automatically capture or authorise only, capturing later', 'shift4-for-woocommerce'),
                 'default' => CaptureStrategySource::MODE_CAPTURE,
                 'options' => CaptureStrategySource::options(),
             ],
             'debug_enabled' => [
-                'title' => __('Debug Logging', 'shift4'),
+                'title' => __('Debug Logging', 'shift4-for-woocommerce'),
                 'type' => 'checkbox',
-                'label' => __('Enable Debug Mode', 'shift4'),
+                'label' => __('Enable Debug Mode', 'shift4-for-woocommerce'),
                 'default' => 'no'
             ],
         ];

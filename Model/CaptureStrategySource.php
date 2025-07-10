@@ -10,8 +10,8 @@ class CaptureStrategySource
     public static function options(): array
     {
         return [
-            self::MODE_CAPTURE => __('Capture', 'shift4'),
-            self::MODE_AUTH => __('Authorise Only', 'shift4'),
+            self::MODE_CAPTURE => __('Capture', 'shift4-for-woocommerce'),
+            self::MODE_AUTH => __('Authorise Only', 'shift4-for-woocommerce'),
         ];
     }
 }

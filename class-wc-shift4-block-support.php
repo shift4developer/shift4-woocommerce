@@ -37,19 +37,22 @@ class WC_Shift4_Block_Support extends AbstractPaymentMethodType
             'wc-shift4-blocks-integration',
             plugins_url('build/index.js', __FILE__),
             ['wc-blocks-checkout'],
-            '1.0',
+            SHIFT4_BUILD_HASH,
             true
         );
 
         wp_enqueue_script(
             'applepay-button-client',
-            'https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js'
+            'https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js',
+            [],
+            SHIFT4_BUILD_HASH,
+            false
         );
 
         $data = $this->get_payment_method_data();
         $shift4Config = [
             'blogName' => get_bloginfo('name'),
-            'threeDSValidationMessage' => __('3DS validation failed.', 'shift4'),
+            'threeDSValidationMessage' => __('3DS validation failed.', 'shift4-for-woocommerce'),
             'publicKey' => $data['publicKey'],
         ];
 
