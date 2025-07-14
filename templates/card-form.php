@@ -36,10 +36,12 @@
         if (!window.shift4Initialised) {
             window.shift4Config = <?php echo json_encode($shift4Config); ?>;
             if (window.shift4JsLoaded) {
+                window.createLog(`window.shift4JsLoaded`);
                 initShift4();
                 window.shift4Initialised = true;
             } else {
-                document.addEventListener("shift4JsLoaded", function () {
+                document.addEventListener("shift4JsLoaded event", function () {
+                    window.createLog(`shift4JsLoaded`);
                     initShift4();
                     window.shift4Initialised = true;
                 });

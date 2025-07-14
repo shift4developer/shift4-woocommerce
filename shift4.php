@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Shift4 for WooCommerce
  * Description: WooCommerce payments via the Shift4 platform
- * Version: 1.0.6
+ * Version: 1.0.7
  * Plugin URI: https://dev.shift4.com/docs/plugins/woo-commerce/
  * Author: Shift4
  * Author URI: https://shift4.com/
@@ -20,6 +20,8 @@ use Automattic\WooCommerce\Vendor\League\Container\ReflectionContainer;
 use Shift4\WooCommerce\Gateway\ApplePay;
 use Shift4\WooCommerce\Gateway\Card;
 use Shift4\WooCommerce\Model\ConfigProvider;
+
+require_once plugin_dir_path(__FILE__) . '/utils/Shift4LogWC.php';
 
 // Define version ID for current build
 $commitHashFile = __DIR__ . '/buildId.php';
@@ -143,5 +145,15 @@ if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
             <?php
             
         });
+
+        add_action('wp_ajax_shift4_log_js', 'shift4_log_js_callback');
+        add_action('wp_ajax_nopriv_shift4_log_js', 'shift4_log_js_callback');
+        function shift4_log_js_callback() {
+            if (!empty($_POST['messages'])) {
+                shift4_log($_POST['messages']);
+            }
+
+            wp_die();
+        }
     });
 }

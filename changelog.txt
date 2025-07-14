@@ -1,5 +1,8 @@
 *** Shift4 for WooCommerce Changelog ***
 
+2025-07-14 - version 1.0.7
+* Added logs to WC
+
 2025-07-01 - version 1.0.6
 * Adjusted plugin to Wordpress Guidelines before subbmiting to Wordpress SVN repository
 

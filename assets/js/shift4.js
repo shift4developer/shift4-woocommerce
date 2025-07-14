@@ -11,6 +11,28 @@ const errorComponent = `
 const shift4FormSelector = '#shift4-payment-form';
 const shift4ErrorSelector = '#shift4-payment-error';
 
+window.batchLogTimeout = null;
+window.batchLogsMessages = [];
+
+function createLog(message) {
+    if (wc_order_attribution.params.ajaxurl) {
+        window.batchLogsMessages.push(`[UI] ${message} ${Date.now()}`);
+        if (window.batchLogTimeout) {
+            clearTimeout(window.batchLogTimeout);
+        }
+
+        window.batchLogTimeout = setTimeout(() => {
+            jQuery.post(wc_order_attribution.params.ajaxurl, {
+                action: 'shift4_log_js',
+                messages: window.batchLogsMessages
+            });
+            window.batchLogsMessages = [];
+        }, 1000)
+    }
+}
+
+window.createLog = createLog;
+
 function initShift4(blockOptions) {
 
     if (!window.shift4Config) {
@@ -27,9 +49,10 @@ function initShift4(blockOptions) {
         // Create components to securely collect sensitive payment data
         try {
             const isInitialzed = $('[data-shift4="number"]').children().size() > 0;
-
+            window.createLog('Start components initialization');
             if (!isInitialzed) {
                 components = shift4.createComponentGroup().automount(shift4FormSelector);
+                window.createLog('Completed components initialization');
             }
         } catch (err) {
             // When WC checkout initializes it reloads the payment section so catch any missing DOM errors
@@ -38,6 +61,7 @@ function initShift4(blockOptions) {
     window.shift4UpdatedCheckout = updatedCheckout
 
     $('body').on('updated_checkout', function () {
+        window.createLog('Component needs triggering');
         updatedCheckout()
     });
 
@@ -50,6 +74,7 @@ function initShift4(blockOptions) {
 
     // Trigger one time as the order-pay screen and add-to-account does not trigger it, and we use for initialization
     if (window.shift4Config.componentNeedsTriggering) {
+        window.createLog('Component needs triggering');
         $(document.body).trigger('updated_checkout');
     }
 
@@ -90,6 +115,7 @@ function initShift4(blockOptions) {
     });
 
     function paymentFormSubmit() {
+        window.createLog('Payment form submit');
         // Send card data to Shift
         return shift4.createToken(components)
             .then(tokenCreatedCallback)
@@ -104,16 +130,22 @@ function initShift4(blockOptions) {
                 currency: $shift4Form.data('currency'),
                 card: token.id,
             };
+            window.createLog(`['strict', 'frictionless'] Payment form submit ${JSON.stringify({
+                amount: $shift4Form.data('amount'),
+                currency: $shift4Form.data('currency')
+            })}`);
             // Open frame with 3-D Secure process
             shift4.verifyThreeDSecure(request)
                 .then(threeDSecureCompletedCallback)
                 .catch(errorCallback);
         } else {
+            window.createLog("['disabled'] Payment form submit");
             setTokenAndContinue(token);
         }
     }
 
     function errorCallback(error) {
+        window.createLog('Error callback ' + error.message);
         if (error.message) {
             // Display error message
             addError(error.message);
@@ -128,27 +160,33 @@ function initShift4(blockOptions) {
     function threeDSecureCompletedCallback(token) {
         switch (window.shift4CardSettings.threeDS) {
             case 'disabled':
+                window.createLog('3DS completed callback [disabled]');
                 setTokenAndContinue(token);
                 break;
 
             case 'frictionless':
                 if (token.threeDSecureInfo?.enrolled === false || token.threeDSecureInfo?.liabilityShift === 'successful') {
+                    window.createLog('3DS completed callback [frictionless]');
                     setTokenAndContinue(token);
                 } else {
+                    window.createLog('3DS completed callback [frictionless] error ' + window.shift4Config.threeDSValidationMessage);
                     addError(window.shift4Config.threeDSValidationMessage);
                 }
                 break;
 
             case 'strict':
                 if (token.threeDSecureInfo?.enrolled === true) {
+                    window.createLog('3DS completed callback [strict]');
                     setTokenAndContinue(token);
                 } else {
+                    window.createLog('3DS completed callback [strict] error ' + window.shift4Config.threeDSValidationMessage);
                     addError(window.shift4Config.threeDSValidationMessage);
                 }
         }
     }
 
     function setTokenAndContinue(token) {
+        window.createLog(`Set token and continue (hasOptions: ${!!blockOptions ? 'true' : 'false'})`);
         if (blockOptions) {
             blockOptions.paymentMethodDataRef.current = {
                 'shift4_card_token': token.id,
@@ -163,6 +201,7 @@ function initShift4(blockOptions) {
     }
 
     function setValidationState(state) {
+        window.createLog(`Set validation state ${state ? 'true' : 'false'}`);
         $checkoutForm.attr('shift4-validated', state);
     }
 
@@ -174,6 +213,7 @@ function initShift4(blockOptions) {
     }
 
     function addError(errorMessage) {
+        window.createLog(`addError ${errorMessage}`);
         createErrorElement();
         const $errorMessage = $(shift4ErrorSelector);
         $errorMessage.removeClass('hidden');
@@ -183,6 +223,7 @@ function initShift4(blockOptions) {
     }
 
     function clearError() {
+        window.createLog(`Clear error`);
         createErrorElement();
         const $errorMessage = $(shift4ErrorSelector);
         $errorMessage.addClass('hidden');
@@ -195,6 +236,7 @@ function initShift4(blockOptions) {
      */
     async function block_paymentFormSubmit(params) {
         try {
+            window.createLog(`Block payment form submit error`);
             const token = await shift4.createToken(components)
             await handleTokenCreated(token, {
                 ...params,
@@ -221,12 +263,15 @@ function initShift4(blockOptions) {
     async function handleTokenCreated(token, request) {
         if (['strict', 'frictionless'].includes(window.shift4CardSettings.threeDS)) {
             try {
+                window.createLog(`['strict', 'frictionless'] Handle token created`);
                 const result = await shift4.verifyThreeDSecure(request)
                 threeDSecureCompletedCallback(result)
             } catch (error) {
+                window.createLog(`['strict', 'frictionless'] Handle token created error - ${error}`);
                 errorCallback(error);
             }
         } else {
+            window.createLog(`['disabled'] Handle token created`);
             setTokenAndContinue(token)
         }
     }
@@ -236,6 +281,8 @@ function initShift4(blockOptions) {
 
     async function payWithApplePay(amount) {
         console.log('Initializing Apple Pay payment...', amount);
+
+        window.createLog(`Initializing Apple Pay payment ${amount}`);
         // Configure PaymentRequest method details
         const applePayMethodData = {
             supportedMethods: 'https://apple.com/apple-pay',
@@ -257,9 +304,11 @@ function initShift4(blockOptions) {
         }
 
         const paymentRequest = shift4.createPaymentRequest([applePayMethodData], shoppingCartDetails);
+        window.createLog(`Created apple pay payment`);
         try {
             return await paymentRequest.show()
         } catch (error) {
+            window.createLog(`Apple pay paymentRequest.show error ${error.message}`);
             errorCallback(error)
             throw error
         }

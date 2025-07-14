@@ -143,13 +143,16 @@ class Card extends \WC_Payment_Gateway_CC
     public function validate_fields()
     {
         if (isset($_POST['wc-shift4_card-payment-token']) && 'new' !== $_POST['wc-shift4_card-payment-token']) {
+            shift4_log_be('validate_fields token new');
             return true;
         }
         if (empty($_POST['shift4_card_token'])) {
             // Parent method says to return false but that doesn't abort the checkout process, an exception is needed
+            shift4_log_be('validate_fields Failed validation');
             $this->logger->debug(__METHOD__ . ' failed validation');
             throw new \Exception('Shift4 payment token missing');
         }
+        shift4_log_be('validate_fields Passed validation');
         $this->logger->debug(__METHOD__ . ' passed validation');
     }
 
@@ -160,12 +163,14 @@ class Card extends \WC_Payment_Gateway_CC
      */
     public function process_payment($order_id)
     {
+        shift4_log_be('process_payment card');
         $order = wc_get_order($order_id);
 
         $chargeRequest = $this->chargeRequestBuilder->build($order, $this);
 
         switch ($this->determinePaymentRequestType()) {
             case self::PAYMENT_TYPE_EXISTING_TOKEN:
+                shift4_log_be('process_payment card existing token');
                 $vaultedToken = \WC_Payment_Tokens::get($_POST['wc-shift4_card-payment-token']);
                 if ($vaultedToken->get_user_id() !== get_current_user_id()) {
                     throw new \Exception('Not your token');
@@ -176,21 +181,25 @@ class Card extends \WC_Payment_Gateway_CC
                 $chargeRequest->customerId($shift4CustomerId);
                 break;
             case self::PAYMENT_TYPE_SAVE_CARD:
+                shift4_log_be('process_payment card save card');
                 $token = $this->tokensiation->saveCard();
                 $user = wp_get_current_user();
                 $shift4CustomerId = $user->get(TokensiationManager::SHIFT4_CUSTOMER_WP_USER_ID_KEY);
                 $chargeRequest->customerId($shift4CustomerId);
                 break;
             default:
+                shift4_log_be('process_payment card token');
                 $token = $_POST['shift4_card_token'];
                 break;
         }
         $chargeRequest->card($token);
 
         try {
+            shift4_log_be('process_payment card execute');
             $charge = $this->chargeCommand->execute($chargeRequest);
             return $this->handleChargeResponse($order, $charge);
         } catch (Shift4Exception $e) {
+            shift4_log_be('process_payment card error');
             $this->logger->error(
                 sprintf(
                     'Encountered `Shift4Exception` while creating charge for %s. Request: %s, Error: %s',

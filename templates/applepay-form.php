@@ -20,12 +20,15 @@ $formId = uniqid('applepayForm_');
         });
         var shift4 = Shift4('<?php echo esc_html($publicKey); ?>');
         if (window.ApplePaySession && window.ApplePaySession.canMakePayments() && window.PaymentRequest) {
+            window.createLog(`Apple pay can make payments`);
             $("#apple-pay-submit-button").click(payWithApplePay);
         } else {
+            window.createLog(`Apple pay can not make payments`);
             $("li.payment_method_shift4_applepay").hide();
         }
 
         function payWithApplePay() {
+            window.createLog(`Initializing Apple Pay payment`);
             // Configure PaymentRequest method details
             const applePayMethodData = {
                 supportedMethods: 'https://apple.com/apple-pay',
@@ -59,12 +62,14 @@ $formId = uniqid('applepayForm_');
         }
 
         function createCharge(paymentResponse) {
+            window.createLog(`block pay with apple createCharge`);
             const request = paymentResponse.details.token.paymentData;
             document.getElementById('shift4_applepay_token').value = JSON.stringify(request);
             <?php echo esc_html($formId); ?>.submit()
             paymentResponse.complete('success')
         }
         function displayError(err) {
+            window.createLog(`block pay with apple pay displayError ${err.message}`);
             const msg = typeof err === "string" ? err : err.message
             $('#payment-error').text(msg || 'Unknown error').show();
         }

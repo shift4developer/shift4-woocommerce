@@ -1,6 +1,6 @@
 {
     "name": "shift4-for-woocommerce",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "description": "Shift4 for WooCommerce Checkout Block payment gateway",
     "private": true,
     "main": "build/index.js",
