@@ -1,15 +1,10 @@
-=== Shift4 for WooCommerce ===
-Tags: online store, shop, sell online, shift4, woocommerce
-Requires at least: 6.7
-Tested up to: 6.8
-Requires PHP: 8.0
-Stable tag: 1.0.7
+# Shift4 for WooCommerce
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Plugins enables payments in your WooCommerce store using two Shift4 methods.
 
-== Description ==
+## Description
 
 The [Shift4 for WooCommerce plugin](https://dev.shift4.com/docs/plugins/woo-commerce/) enables payments in your WooCommerce store using two methods: Apple Pay and card payments processed by Shift4. By leveraging this plugin, you will be able to accept payments safely and securely.
 
@@ -24,7 +19,7 @@ Features:
 * WooCommerce Block-based Checkout
 * Order via admin
 
-== Installation ==
+## Installation
 
 1. Log in to your WordPress admin panel and go to Plugins -> Add New
 2. Type **Shift4 for WooCommerce** in the search box and click on the search button.
@@ -38,7 +33,7 @@ OR
 3. Click the Upload Plugin button to upload the zip.
 4. Click Install Now to install and activate the plugin.
 
-== Configuration ==
+## Configuration
 
 WooCommerce > Settings > Payments
 
@@ -62,7 +57,7 @@ Shift4 Apple Pay
 * Title - Title of the payment method that will show in the checkout to the customer.  
 
 
-== Supported Payment Methods ==
+## Supported Payment Methods
 
 **Card**
 Need to ensure card types are enabled in your Shift4 Account. Card Types that Shift4 supports: 
@@ -80,7 +75,7 @@ Only customers with an account will be able to store their card for future use.
 Need to enable Apple Pay in your Shift4 Account - do to this please email: devsupport@shift4.com Your certificate merchant certificate needs to be registered either through your Shift4 Dashboard or at Apple's webpage. Please follow our manual for detailed instructions.
 
 
-== Testing ==
+## Testing
 
 For testing your integration you first need a Shift4 development account which you can setup here: [https://dev.shift4.com/](https://dev.shift4.com/)
 * In your test WooCommerce  store, install the Shift4 for WooCommerce plugin.
@@ -88,7 +83,7 @@ For testing your integration you first need a Shift4 development account which y
 * You can now test Shift4 transaction in your WooCommerce test store 
 
 
-== Changelog ==
+## Changelog
 
 2025-07-14 - version 1.0.7
 * Added logs to WC
