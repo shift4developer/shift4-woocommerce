@@ -116,9 +116,11 @@ class ApplePay extends \WC_Payment_Gateway
      */
     public function process_payment($order_id)
     {
+        shift4_log_be('process_payment apple');
         $order = wc_get_order($order_id);
 
         try {
+            shift4_log_be('process_payment apple execute');
             $paymentMethod = $this->paymentMethodCommand->execute();
             $chargeRequest = $this->chargeRequestBuilder->build($order, $this);
             $chargeRequest->paymentMethod($paymentMethod->getId());
@@ -126,6 +128,7 @@ class ApplePay extends \WC_Payment_Gateway
             return $this->handleChargeResponse($order, $charge);
 
         } catch (Shift4Exception $e) {
+            shift4_log_be('process_payment apple error');
             $this->logger->error(
                 sprintf(
                     'Encountered `%s` while creating charge for %s. Request: %s, Error: %s',
