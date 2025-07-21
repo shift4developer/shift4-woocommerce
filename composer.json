@@ -1,0 +1,19 @@
+{
+    "name": "shift4/shift4-woocommerce",
+    "autoload": {
+        "psr-4": {
+            "Shift4\\WooCommerce\\Model\\": "Model",
+            "Shift4\\WooCommerce\\Gateway\\": "Gateway"
+        }
+    },
+    "authors": [
+        {
+            "name": "Shift4",
+            "email": "dev@shift4.com"
+        }
+    ],
+    "require": {
+        "league/container": "^5.1",
+        "shift4/shift4-php": "^4.0"
+    }
+}

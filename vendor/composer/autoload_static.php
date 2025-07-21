@@ -9,19 +9,40 @@ class ComposerStaticInit3f7c1a2f9422e6ce9ac041660faed568
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
-            'Shift4\\WooCommerce\\' => 19,
+            'Shift4\\WooCommerce\\Model\\' => 25,
+            'Shift4\\WooCommerce\\Gateway\\' => 27,
             'Shift4\\' => 7,
+        ),
+        'P' => 
+        array (
+            'Psr\\Container\\' => 14,
+        ),
+        'L' => 
+        array (
+            'League\\Container\\' => 17,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Shift4\\WooCommerce\\' => 
+        'Shift4\\WooCommerce\\Model\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/',
+            0 => __DIR__ . '/../..' . '/Model',
+        ),
+        'Shift4\\WooCommerce\\Gateway\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Gateway',
         ),
         'Shift4\\' => 
         array (
             0 => __DIR__ . '/..' . '/shift4/shift4-php/lib/Shift4',
+        ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
+        'League\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/container/src',
         ),
     );
 
