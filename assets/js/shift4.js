@@ -240,7 +240,6 @@ function initShift4() {
     window.clearError = clearError
 
     async function payWithApplePay(amount) {
-        console.log('Initializing Apple Pay payment...', amount);
         // Configure PaymentRequest method details
         const applePayMethodData = {
             supportedMethods: 'https://apple.com/apple-pay',
