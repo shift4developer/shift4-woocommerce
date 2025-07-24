@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Shift4 for WooCommerce
  * Description: WooCommerce payments via the Shift4 platform
- * Version: 1.0.7
+ * Version: 1.0.8
  * Plugin URI: https://dev.shift4.com/docs/plugins/woo-commerce/
  * Author: Shift4
  * Author URI: https://shift4.com/
