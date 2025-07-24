@@ -11,6 +11,7 @@ use Shift4\WooCommerce\Gateway\Command\RefundCommand;
 use Shift4\WooCommerce\Model\ChargeRequestBuilder;
 use Shift4\WooCommerce\Model\GatewayFactory;
 use Shift4\WooCommerce\Model\Logger;
+use Shift4\WooCommerce\Gateway\FraudHandler;
 
 class ApplePay extends \WC_Payment_Gateway
 {
@@ -126,6 +127,8 @@ class ApplePay extends \WC_Payment_Gateway
             return $this->handleChargeResponse($order, $charge);
 
         } catch (Shift4Exception $e) {
+            $action = $this->settings['action_when_fraud_detected'];
+            FraudHandler::handleFraud($e, $order, $action);
             $this->logger->error(
                 sprintf(
                     'Encountered `%s` while creating charge for %s. Request: %s, Error: %s',

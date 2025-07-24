@@ -12,6 +12,7 @@ use Shift4\WooCommerce\Model\CurrencyUnitConverter;
 use Shift4\WooCommerce\Model\ThreeDSecureSource;
 use Shift4\WooCommerce\Model\Logger;
 use Shift4\WooCommerce\Model\TokensiationManager;
+use Shift4\WooCommerce\Gateway\FraudHandler;
 
 class Card extends \WC_Payment_Gateway_CC
 {
@@ -191,6 +192,8 @@ class Card extends \WC_Payment_Gateway_CC
             $charge = $this->chargeCommand->execute($chargeRequest);
             return $this->handleChargeResponse($order, $charge);
         } catch (Shift4Exception $e) {
+            $action = $this->settings['action_when_fraud_detected'];
+            FraudHandler::handleFraud($e, $order, $action);
             $this->logger->error(
                 sprintf(
                     'Encountered `Shift4Exception` while creating charge for %s. Request: %s, Error: %s',
