@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Shift4 for WooCommerce
  * Description: WooCommerce payments via the Shift4 platform
- * Version: 1.0.6
+ * Version: 1.0.7
  * Plugin URI: https://dev.shift4.com/docs/plugins/woo-commerce/
  * Author: Shift4
  * Author URI: https://shift4.com/
@@ -15,8 +15,10 @@
 
 defined('ABSPATH') or exit;
 
-use Automattic\WooCommerce\Vendor\League\Container\Container;
-use Automattic\WooCommerce\Vendor\League\Container\ReflectionContainer;
+require_once __DIR__ . '/vendor/autoload.php';
+
+use League\Container\Container;
+use League\Container\ReflectionContainer;
 use Shift4\WooCommerce\Gateway\ApplePay;
 use Shift4\WooCommerce\Gateway\Card;
 use Shift4\WooCommerce\Model\ConfigProvider;
@@ -45,7 +47,7 @@ function getCardSingleton(Container $container)
     if (!defined('SHIFT4_CARD_REGISTERED')) {
         define('SHIFT4_CARD_REGISTERED', true);
         $card = $container->get(Card::class);
-        $container->share(Card::class, function () use ($card) {
+        $container->add(Card::class, function () use ($card) {
             return $card;
         });
     }
@@ -57,7 +59,7 @@ function getApplePaySingleton(Container $container)
     if (!defined('SHIFT4_ApplePay_REGISTERED')) {
         define('SHIFT4_ApplePay_REGISTERED', true);
         $applePay = $container->get(ApplePay::class);
-        $container->share(ApplePay::class, function () use ($applePay) {
+        $container->add(ApplePay::class, function () use ($applePay) {
             return $applePay;
         });
     }
@@ -67,7 +69,6 @@ function getApplePaySingleton(Container $container)
 // Test to see if WooCommerce is active (including network activated).
 $plugin_path = trailingslashit( WP_PLUGIN_DIR ) . 'woocommerce/woocommerce.php';
 if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
-    require_once __DIR__ . '/vendor/autoload.php';
     add_action('plugins_loaded', function() {
         // Init DI container and auto-wiring
         $container = new Container();

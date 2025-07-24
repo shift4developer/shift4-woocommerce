@@ -13,9 +13,7 @@ declare global {
 interface Window {
     ApplePaySession: ApplePaySession | undefined;
     clearError: () => void;
-    initShift4: (options: {
-        paymentMethodDataRef?: React.MutableRefObject<any>;
-    }) => void;
+    initShift4: () => void;
     shift4Config: {
         blogName: string;
         threeDSValidationMessage: string;
@@ -62,5 +60,8 @@ interface Window {
               deps?: any[]
             ) => Return;
         }
+    },
+    paymentMethodDataRef: {
+      current: Record<string, any>;
     }
 }

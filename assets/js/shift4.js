@@ -11,7 +11,10 @@ const errorComponent = `
 const shift4FormSelector = '#shift4-payment-form';
 const shift4ErrorSelector = '#shift4-payment-error';
 
-function initShift4(blockOptions) {
+function initShift4() {
+    const paymentMethodDataRef = {
+        current: {}
+    };
 
     if (!window.shift4Config) {
         console.error('Shift4 payment gateway not configured');
@@ -21,6 +24,7 @@ function initShift4(blockOptions) {
     const $ = jQuery;
     const $checkoutForm = $('form.woocommerce-checkout, #order_review, #add_payment_method');
     const shift4 = window.Shift4(window.shift4Config.publicKey);
+    
     let components;
 
     function updatedCheckout() {
@@ -149,14 +153,15 @@ function initShift4(blockOptions) {
     }
 
     function setTokenAndContinue(token) {
-        if (blockOptions) {
-            blockOptions.paymentMethodDataRef.current = {
-                'shift4_card_token': token.id,
-                'shift4_card_fingerprint': token.fingerprint
-            }
-        } else {
-            document.getElementById('shift4_card_token').value = token.id;
-            document.getElementById('shift4_card_fingerprint').value = token.fingerprint;
+        window.paymentMethodDataRef.current = {
+            'shift4_card_token': token.id,
+            'shift4_card_fingerprint': token.fingerprint
+        }
+        const tokenField = document.getElementById('shift4_card_token');
+        const fingerprintField = document.getElementById('shift4_card_fingerprint');
+        if (tokenField && fingerprintField) {
+            tokenField.value = token.id;
+            fingerprintField.value = token.fingerprint;
         }
         setValidationState(true);
         $checkoutForm.submit();
@@ -235,7 +240,6 @@ function initShift4(blockOptions) {
     window.clearError = clearError
 
     async function payWithApplePay(amount) {
-        console.log('Initializing Apple Pay payment...', amount);
         // Configure PaymentRequest method details
         const applePayMethodData = {
             supportedMethods: 'https://apple.com/apple-pay',
@@ -266,7 +270,9 @@ function initShift4(blockOptions) {
     }
 
     window.shift4PayWithApplePay = payWithApplePay
+    window.paymentMethodDataRef = paymentMethodDataRef;
 }
+
 window.initShift4 = initShift4;
 const event = new Event("shift4JsLoaded");
 document.dispatchEvent(event);

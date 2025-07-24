@@ -20,7 +20,7 @@ export const Shift4ApplePay = (props: RegisterPaymentMethodContentProps) => {
         if (!window.shift4Initialised) {
             const initialize = () => {
                 if (typeof window.initShift4 === 'function') {
-                    window.initShift4({});
+                    window.initShift4();
                     window.shift4Initialised = true
                 }
             }

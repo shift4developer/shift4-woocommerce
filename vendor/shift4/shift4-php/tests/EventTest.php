@@ -7,43 +7,46 @@ use Shift4\Request\CreatedFilter;
 class EventTest extends AbstractGatewayTestBase
 {
 
-    public function testRetrieveEvent() 
+    function testRetrieveEvent()
     {
         // given
         $chargeRequest = Data::chargeRequest();
         $charge = $this->gateway->createCharge($chargeRequest);
-        
-        $eventId = $this->gateway->listEvents()->getList()[0]->getId();
-        
+
+        $events = $this->gateway->listEvents();
+        $expectedEvent = array_filter($events->getList(), function ($event) use ($charge) {
+            return $event->getType() === 'CHARGE_SUCCEEDED' && $event->getData()->getId() === $charge->getId();
+        })[0];
+
         // when
-        $event = $this->gateway->retrieveEvent($eventId);
-        
+        $event = $this->gateway->retrieveEvent($expectedEvent->getId());
+
         // then
         Assert::assertChargeSucceededEvent($chargeRequest, $event);
     }
-    
-    public function testListEvents()
+
+    function testListEvents()
     {
         // given
         $chargeRequest = Data::chargeRequest();
-        
-        $charge = $this->gateway->createCharge($chargeRequest);
-        $this->gateway->createCharge($chargeRequest);
-        $this->gateway->createCharge($chargeRequest);
-        
+
+        $charge1 = $this->gateway->createCharge($chargeRequest);
+        $charge2 = $this->gateway->createCharge($chargeRequest);
+        $charge3 = $this->gateway->createCharge($chargeRequest);
+        $expectedChargeIds = [$charge1->getId(), $charge2->getId(), $charge3->getId()];
+
         $listRequest = (new EventListRequest())
-            ->limit(2)
             ->includeTotalCount(true)
-            ->created((new CreatedFilter())->gte($charge->getCreated()));
-        
+            ->limit(100);
+
         // when
         $list = $this->gateway->listEvents($listRequest);
-    
+
         // then
-        self::assertTrue($list->getTotalCount() >= 3);
-        self::assertEquals(2, count($list->getList()));
-        foreach ($list->getList() as $event) {
-            Assert::assertChargeSucceededEvent($chargeRequest, $event);
-        }
+        self::assertGreaterThanOrEqual(3, $list->getTotalCount());
+        $eventsForCreatedCharges = array_filter($list->getList(), function ($event) use ($expectedChargeIds) {
+            return $event->getType() === 'CHARGE_SUCCEEDED' && in_array($event->getData()->getId(), $expectedChargeIds);
+        });
+        self::assertEquals(3, sizeOf($eventsForCreatedCharges));
     }
 }
