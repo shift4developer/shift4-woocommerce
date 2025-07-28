@@ -12,6 +12,7 @@ trait SharedGatewayConfigTrait
         'shared_secret_key',
         'capture_strategy',
         'debug_enabled',
+        'action_when_fraud_detected'
     ];
 
     protected function initSharedFields()
@@ -98,6 +99,17 @@ trait SharedGatewayConfigTrait
                 'desc_tip' => __('Automatically capture or authorise only, capturing later', 'shift4-for-woocommerce'),
                 'default' => CaptureStrategySource::MODE_CAPTURE,
                 'options' => CaptureStrategySource::options(),
+            ],
+            'action_when_fraud_detected' => [
+                'title' => __('Action with order when fraud is detected', 'shift4-for-woocommerce'),
+                'type' => 'select',
+                'desc_tip' => __('Choose the action to take for order when fraud is detected', 'shift4-for-woocommerce'),
+                'default' => 'standard',
+                'options' => [
+                    'standard' => __('Standard', 'shift4-for-woocommerce'),
+                    'cancel_order' => __('Cancel', 'shift4-for-woocommerce'),
+                    'move_to_trash' => __('Move to trash', 'shift4-for-woocommerce'),
+                ],
             ],
             'debug_enabled' => [
                 'title' => __('Debug Logging', 'shift4-for-woocommerce'),
