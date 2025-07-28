@@ -24,7 +24,6 @@ class FraudHandler
                 'card_declined',
                 'blocked',
                 'call_issuer',
-                'limit_exceeded',
                 'do_not_try_again',
                 'payment_method_declined',
             ];
