@@ -2,6 +2,8 @@
 
 namespace Shift4\WooCommerce\Gateway\Command;
 
+if (!defined('ABSPATH')) exit;
+
 use Shift4\Request\PaymentMethodRequest;
 use Shift4\Request\PaymentMethodRequestApplePay;
 use Shift4\Response\PaymentMethod;

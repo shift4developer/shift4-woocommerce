@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shift4\WooCommerce\Gateway;
 
+if (!defined('ABSPATH')) exit;
+
 use Shift4\Exception\Shift4Exception;
 use Shift4\WooCommerce\Gateway\Command\ChargeCommand;
 use Shift4\WooCommerce\Gateway\Command\RefundCommand;

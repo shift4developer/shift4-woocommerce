@@ -2,6 +2,8 @@
 
 namespace Shift4\WooCommerce\Model;
 
+if (!defined('ABSPATH')) exit;
+
 class Logger extends \WC_Logger
 {
     public function __construct(

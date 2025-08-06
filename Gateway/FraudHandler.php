@@ -2,6 +2,8 @@
 
 namespace Shift4\WooCommerce\Gateway;
 
+if (!defined('ABSPATH')) exit;
+
 use WC_Order;
 use Shift4\Exception\Shift4Exception;
 

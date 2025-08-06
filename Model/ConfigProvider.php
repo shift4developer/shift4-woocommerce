@@ -2,6 +2,8 @@
 
 namespace Shift4\WooCommerce\Model;
 
+if (!defined('ABSPATH')) exit;
+
 class ConfigProvider
 {
     private bool $initilised = false;

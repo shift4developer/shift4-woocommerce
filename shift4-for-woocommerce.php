@@ -1,6 +1,7 @@
 <?php
 /*
  * Plugin Name: Shift4 for WooCommerce
+ * Requires Plugins: woocommerce
  * Description: WooCommerce payments via the Shift4 platform
  * Version: 1.0.8
  * Plugin URI: https://dev.shift4.com/docs/plugins/woo-commerce/
@@ -13,7 +14,7 @@
  * WC tested up to: 8.4.0
  */
 
-defined('ABSPATH') or exit;
+if (!defined('ABSPATH')) exit;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
