@@ -16,14 +16,21 @@ function initShift4() {
         current: {}
     };
 
-    if (!window.shift4Config) {
+    if (!window.shift4CardViewSettings || !window.shift4Config) {
         console.error('Shift4 payment gateway not configured');
         return;
     }
 
+    const config = {
+        ...window.shift4CardViewSettings,
+        ...window.shift4Config
+    };
+
+    console.log('config', config);
+
     const $ = jQuery;
     const $checkoutForm = $('form.woocommerce-checkout, #order_review, #add_payment_method');
-    const shift4 = window.Shift4(window.shift4Config.publicKey);
+    const shift4 = window.Shift4(config.publicKey);
     
     let components;
 
@@ -53,7 +60,7 @@ function initShift4() {
     });
 
     // Trigger one time as the order-pay screen and add-to-account does not trigger it, and we use for initialization
-    if (window.shift4Config.componentNeedsTriggering) {
+    if (config.componentNeedsTriggering) {
         $(document.body).trigger('updated_checkout');
     }
 
@@ -139,7 +146,7 @@ function initShift4() {
                 if (token.threeDSecureInfo?.enrolled === false || token.threeDSecureInfo?.liabilityShift === 'successful') {
                     setTokenAndContinue(token);
                 } else {
-                    addError(window.shift4Config.threeDSValidationMessage);
+                    addError(config.threeDSValidationMessage);
                 }
                 break;
 
@@ -147,7 +154,7 @@ function initShift4() {
                 if (token.threeDSecureInfo?.enrolled === true) {
                     setTokenAndContinue(token);
                 } else {
-                    addError(window.shift4Config.threeDSValidationMessage);
+                    addError(config.threeDSValidationMessage);
                 }
         }
     }
@@ -255,7 +262,7 @@ function initShift4() {
         }
         const shoppingCartDetails = {
             total: {
-                label: window.shift4Config.blogName,
+                label: config.blogName,
                 amount
             },
         }

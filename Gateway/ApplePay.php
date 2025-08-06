@@ -87,12 +87,23 @@ class ApplePay extends \WC_Payment_Gateway
             SHIFT4_BUILD_HASH,
             false
         );
+
+        $shift4ApplePayViewSettings = [
+            'currency' => get_woocommerce_currency(),
+            'orderTotal' => $this->getOrderTotal()
+        ];
+
+        add_action('wp_footer', function() use ($shift4ApplePayViewSettings) {
+            wp_localize_script(
+                'wc-shift4-blocks-integration',
+                'shift4ApplePayViewSettings',
+                $shift4ApplePayViewSettings
+            );
+        });
+
         wc_get_template(
             'applepay-form.php',
-            [
-                'publicKey' => $this->getPublicKey(),
-                'orderTotal' => $this->getOrderTotal(),
-            ],
+            [],
             'shift4',
             SHIFT4_PLUGIN_PATH . 'templates/'
         );

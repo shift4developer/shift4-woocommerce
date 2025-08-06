@@ -1,4 +1,5 @@
 === Shift4 for WooCommerce ===
+Contributors: shift4
 Tags: online store, shop, sell online, shift4, woocommerce
 Requires at least: 6.7
 Tested up to: 6.8
