@@ -44,7 +44,7 @@ add_action('before_woocommerce_init', function () {
     }
 });
 
-function getCardSingleton(Container $container)
+function shift4_get_card_singleton(Container $container)
 {
     if (!defined('SHIFT4_CARD_REGISTERED')) {
         define('SHIFT4_CARD_REGISTERED', true);
@@ -56,7 +56,7 @@ function getCardSingleton(Container $container)
     return $container->get(Card::class);
 }
 
-function getApplePaySingleton(Container $container)
+function shift4_get_apple_pay_singleton(Container $container)
 {
     if (!defined('SHIFT4_ApplePay_REGISTERED')) {
         define('SHIFT4_ApplePay_REGISTERED', true);
@@ -85,8 +85,8 @@ if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
 
         add_filter('woocommerce_payment_gateways', function ($methods) use ($container) {
             // Load in the Gateway instance
-            $methods[] = getCardSingleton($container);
-            $methods[] = getApplePaySingleton($container);
+            $methods[] = shift4_get_card_singleton($container);
+            $methods[] = shift4_get_apple_pay_singleton($container);
             return $methods;
         });
         add_action('woocommerce_blocks_payment_method_type_registration', function ($registry) use ($container) {
@@ -101,7 +101,7 @@ if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
             $block_container->register(
                 WC_Shift4_Block_Support::class,
                 function () use ($container) {
-                    return new WC_Shift4_Block_Support(getCardSingleton($container), getApplePaySingleton($container));
+                    return new WC_Shift4_Block_Support(shift4_get_card_singleton($container), shift4_get_apple_pay_singleton($container));
                 }
             );
             $registry->register(
@@ -124,12 +124,27 @@ if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
                 false
             );
 
+            $gatewayCard = shift4_get_card_singleton($container);
 
-            $gateway = getApplePaySingleton($container);
+            $shift4CardViewSettings = [
+                'threeDS' => $gatewayCard->threeDSecureMode(),
+                'threeDSValidationMessage' =>  __('3DS validation failed.', 'shift4-for-woocommerce'),
+                'componentNeedsTriggering' => is_checkout_pay_page() || is_add_payment_method_page(),
+            ];
+
+            wp_localize_script(
+                'wc-shift4-blocks-integration',
+                'shift4CardViewSettings',
+                $shift4CardViewSettings
+            );
+
+            $gatewayApplePay = shift4_get_apple_pay_singleton($container);
 
             $shift4ApplePaySettings = [
-                'applePayTitle' => $gateway->get_option( 'title' ),
-                'enabled' => $gateway->get_option( 'enabled' ) === 'yes',
+                'applePayTitle' => $gatewayApplePay->get_option( 'title' ),
+                'enabled' => $gatewayApplePay->get_option( 'enabled' ) === 'yes',
+                'currency' => get_woocommerce_currency(),
+                'orderTotal' => WC()->cart ? WC()->cart->get_total('edit') : ''
             ];
 
             wp_localize_script(

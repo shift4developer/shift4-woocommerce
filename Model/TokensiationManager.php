@@ -33,8 +33,9 @@ class TokensiationManager
             $success = update_user_meta($user->ID, self::SHIFT4_CUSTOMER_WP_USER_ID_KEY, $shift4CustomerId);
         }
 
+        $cardToken = isset($_POST['shift4_card_token']) ? wc_clean($_POST['shift4_card_token']) : null;
         $cardRequest = new CardRequest();
-        $cardRequest->id($_POST['shift4_card_token']);
+        $cardRequest->id($cardToken);
         $cardRequest->customerId($shift4CustomerId);
         $card = $gateway->createCard($cardRequest);
         $success = (int) $this->buildPaymentToken($card, $user);

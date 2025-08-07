@@ -26,8 +26,6 @@ function initShift4() {
         ...window.shift4Config
     };
 
-    console.log('config', config);
-
     const $ = jQuery;
     const $checkoutForm = $('form.woocommerce-checkout, #order_review, #add_payment_method');
     const shift4 = window.Shift4(config.publicKey);

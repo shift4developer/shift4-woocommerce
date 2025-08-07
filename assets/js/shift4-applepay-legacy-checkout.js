@@ -1,13 +1,19 @@
 $ = jQuery;
 $(function () {
-    const applepayForm = $('form.woocommerce-checkout, #order_review, #add_payment_method');
+    const applepayForm_ddwe123412 = $('form.woocommerce-checkout, #order_review, #add_payment_method');
     $(document.body).on('payment_method_selected', function(e) {
         const selected = document.querySelector('input[name="payment_method"]:checked').value;
         document.getElementById('place_order').style.visibility = (selected === 'shift4_applepay') ? 'hidden' : 'visible';
     });
     var shift4 = Shift4(window.shift4Config.publicKey);
-    if (window.ApplePaySession && window.ApplePaySession.canMakePayments() && window.PaymentRequest && window.shift4ApplePayViewSettings) {
-        $("#apple-pay-submit-button").click(payWithApplePay);
+    if (window.ApplePaySession && window.ApplePaySession.canMakePayments() && window.PaymentRequest && window.shift4ApplePaySettings) {
+        $(document.body).on('updated_checkout', function () {
+            if ($('#apple-pay-submit-button').length) {
+                $('#apple-pay-submit-button').off('click').on('click', function () {
+                    payWithApplePay();
+                });
+            }
+        });
     } else {
         const style = document.createElement('style');
 
@@ -38,8 +44,8 @@ $(function () {
             total: {
                 label: window.shift4Config.blogName,
                 amount: {
-                    currency: window.shift4ApplePayViewSettings.currency,
-                    value: window.shift4ApplePayViewSettings.orderTotal,
+                    currency: window.shift4ApplePaySettings.currency,
+                    value: window.shift4ApplePaySettings.orderTotal,
                 }
             },
         };
@@ -55,7 +61,7 @@ $(function () {
     function createCharge(paymentResponse) {
         const request = paymentResponse.details.token.paymentData;
         document.getElementById('shift4_applepay_token').value = JSON.stringify(request);
-        applepayForm.submit()
+        applepayForm_ddwe123412.submit()
         paymentResponse.complete('success')
     }
     function displayError(err) {

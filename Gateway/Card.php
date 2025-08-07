@@ -122,11 +122,6 @@ class Card extends \WC_Payment_Gateway_CC
 
     public function form()
     {
-        $shift4CardViewSettings = [
-            'threeDS' => $this->threeDSecureMode(),
-            'threeDSValidationMessage' =>  __('3DS validation failed.', 'shift4-for-woocommerce'),
-            'componentNeedsTriggering' => is_checkout_pay_page() || is_add_payment_method_page(),
-        ];
         wc_get_template(
             'card-form.php',
             [
@@ -135,16 +130,6 @@ class Card extends \WC_Payment_Gateway_CC
             'shift4',
             SHIFT4_PLUGIN_PATH . 'templates/',
         );
-
-        add_action('wp_footer', function() use ($shift4CardViewSettings) {
-            wp_localize_script(
-                'wc-shift4-blocks-integration',
-                'shift4CardViewSettings',
-                $shift4CardViewSettings
-            );
-        });
-
-
     }
 
     /**
