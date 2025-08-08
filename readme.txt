@@ -121,3 +121,6 @@ For testing your integration you first need a Shift4 development account which y
 
 2024-02-29 - version 1.0.0
 * Initial release.
+
+== Privacy policy ==
+[Privacy policy]https://www.shift4.com/privacy-policy
