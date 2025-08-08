@@ -33,7 +33,7 @@ class TokensiationManager
             $success = update_user_meta($user->ID, self::SHIFT4_CUSTOMER_WP_USER_ID_KEY, $shift4CustomerId);
         }
 
-        $cardToken = isset($_POST['shift4_card_token']) ? wc_clean($_POST['shift4_card_token']) : null;
+        $cardToken = sanitize_text_field($_POST[SHIFT4_POST_DATA_CARD_TOKEN]);
         $cardRequest = new CardRequest();
         $cardRequest->id($cardToken);
         $cardRequest->customerId($shift4CustomerId);

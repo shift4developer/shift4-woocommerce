@@ -54,7 +54,7 @@ trait SharedGatewayConfigTrait
 
     protected function initSharedConfig()
     {
-        $this->sharedSettings = get_option('woocommerce_shift4_shared_settings', null);
+        $this->sharedSettings = get_option(SHIFT4_SHARED_SETTINGS_OPTION_KEY, null);
 
         // Init default values of shared settings
         $sharedFields = $this->getSharedFields();
@@ -133,7 +133,7 @@ trait SharedGatewayConfigTrait
                 $extractedValues[$sharedField] = $postData[$key];
             }
         }
-        update_option('woocommerce_shift4_shared_settings', $extractedValues);
+        update_option(SHIFT4_SHARED_SETTINGS_OPTION_KEY, $extractedValues);
         return parent::process_admin_options();
     }
 

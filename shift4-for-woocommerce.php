@@ -31,6 +31,11 @@ if (file_exists($commitHashFile)) {
     include $commitHashFile;
 }
 
+$constsFile = __DIR__ . '/utils/consts.php';
+if (file_exists($constsFile)) {
+    include $constsFile;
+}
+
 define("SHIFT4_PLUGIN_PATH", trailingslashit(plugin_dir_path(__FILE__)));
 
 // Declare the plugin is compatible with HPOS(High-Performance Order Storage)
@@ -71,6 +76,16 @@ function shift4_get_apple_pay_singleton(Container $container)
 // Test to see if WooCommerce is active (including network activated).
 $plugin_path = trailingslashit( WP_PLUGIN_DIR ) . 'woocommerce/woocommerce.php';
 if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
+    add_action('admin_init', function () {
+        $settings = get_option(SHIFT4_SHARED_SETTINGS_OPTION_KEY, null);
+        if (!$settings) {
+            $settings = get_option(SHIFT4_SHARED_SETTINGS_OPTION_KEY_PREVIOUS, null);
+            if ($settings) {
+                update_option(SHIFT4_SHARED_SETTINGS_OPTION_KEY, $settings);
+                delete_option(SHIFT4_SHARED_SETTINGS_OPTION_KEY_PREVIOUS);
+            }
+        }
+    });
     add_action('plugins_loaded', function() {
         // Init DI container and auto-wiring
         $container = new Container();
@@ -99,13 +114,13 @@ if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
             $block_container = Automattic\WooCommerce\Blocks\Package::container();
             // registers as shared instance.
             $block_container->register(
-                WC_Shift4_Block_Support::class,
+                Shift4_WC_Block_Support::class,
                 function () use ($container) {
-                    return new WC_Shift4_Block_Support(shift4_get_card_singleton($container), shift4_get_apple_pay_singleton($container));
+                    return new Shift4_WC_Block_Support(shift4_get_card_singleton($container), shift4_get_apple_pay_singleton($container));
                 }
             );
             $registry->register(
-                $block_container->get(WC_Shift4_Block_Support::class)
+                $block_container->get(Shift4_WC_Block_Support::class)
             );
         });
         add_action( 'wp_footer', function() use ($container) {

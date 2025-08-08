@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) exit;
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
 use Shift4\WooCommerce\Gateway\Card;
 
-class WC_Shift4_Block_Support extends AbstractPaymentMethodType
+class Shift4_WC_Block_Support extends AbstractPaymentMethodType
 {
 
     public function __construct(private Card $cardGateway,)
@@ -25,7 +25,7 @@ class WC_Shift4_Block_Support extends AbstractPaymentMethodType
      */
     public function initialize()
     {
-        $this->settings = get_option('woocommerce_shift4_shared_settings', []);
+        $this->settings = get_option(SHIFT4_SHARED_SETTINGS_OPTION_KEY, []);
     }
 
     /**

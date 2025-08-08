@@ -35,7 +35,7 @@ class Card extends \WC_Payment_Gateway_CC
         private Logger $logger,
     ) {
         $this->id = self::ID;
-        $this->icon = 'https://www.shift4shop.com/images/credit-card-logos/cc-sm-4_b.png';
+        $this->icon = $this->constructIconUrl("/cc-sm-4_b.webp");
         $this->has_fields = true;
         $this->method_title = 'Shift4 (Card)';
         $this->method_description = 'Take card payments via Shift4';
@@ -141,7 +141,7 @@ class Card extends \WC_Payment_Gateway_CC
         if (isset($_POST['wc-shift4_card-payment-token']) && 'new' !== $_POST['wc-shift4_card-payment-token']) {
             return true;
         }
-        if (empty($_POST['shift4_card_token'])) {
+        if (empty($_POST[SHIFT4_POST_DATA_CARD_TOKEN])) {
             // Parent method says to return false but that doesn't abort the checkout process, an exception is needed
             $this->logger->debug(__METHOD__ . ' failed validation');
             throw new \Exception('Shift4 payment token missing');
@@ -178,7 +178,7 @@ class Card extends \WC_Payment_Gateway_CC
                 $chargeRequest->customerId($shift4CustomerId);
                 break;
             default:
-                $token = $_POST['shift4_card_token'];
+                $token = $_POST[SHIFT4_POST_DATA_CARD_TOKEN];
                 break;
         }
         $chargeRequest->card($token);
@@ -319,17 +319,22 @@ class Card extends \WC_Payment_Gateway_CC
         return CurrencyUnitConverter::majorToMinor((string) WC()->cart->get_total('edit'));
     }
 
+    private function constructIconUrl($fileName)
+    {
+        return plugins_url() . '/shift4-for-woocommerce/assets/icons' . $fileName;
+    }
+
     public function addCardNetworkIconToSavedCards($html, $token)
     {
         $iconUrl = match ($token->get_card_type()) {
-            'Visa' => 'https://js.securionpay.com/6ab079a7/v2/img/visa.svg',
+            'Visa' => $this->constructIconUrl('/visa.svg'),
             'Maestro',
-            'MasterCard' => 'https://js.securionpay.com/6ab079a7/v2/img/mastercard.svg',
-            'American Express' => 'https://js.securionpay.com/6ab079a7/v2/img/amex.svg',
-            'Discover' => 'https://js.securionpay.com/6ab079a7/v2/img/discover.svg',
-            'Diners Club' => 'https://js.securionpay.com/6ab079a7/v2/img/diners.svg',
-            'JCB' => 'https://js.securionpay.com/6ab079a7/v2/img/jcb.svg',
-            default => 'https://js.securionpay.com/6ab079a7/v2/img/unknown.svg',
+            'MasterCard' => $this->constructIconUrl('/mastercard.svg'),
+            'American Express' => $this->constructIconUrl('/amex.svg'),
+            'Discover' => $this->constructIconUrl('/discover.svg'),
+            'Diners Club' => $this->constructIconUrl('/diners.svg'),
+            'JCB' => $this->constructIconUrl('/jcb.svg'),
+            default => $this->constructIconUrl('/unknown.svg'),
         };
 
         if (!preg_match('/([\S\s]*<label for="wc-shift4_card-payment-token-\d+">)([\S\s]*)/', $html, $matches)) {

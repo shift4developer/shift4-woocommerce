@@ -11,7 +11,6 @@ class ConfigProvider
     private $privateKey;
     private $debugMode;
 
-    private const OPTION_KEY = 'woocommerce_shift4_shared_settings';
     public function getPublicKey(): ?string
     {
         $this->ensureInit();
@@ -35,7 +34,7 @@ class ConfigProvider
         if ($this->initilised) {
             return;
         }
-        $settings = get_option(self::OPTION_KEY, null);
+        $settings = get_option(SHIFT4_SHARED_SETTINGS_OPTION_KEY, null);
         $this->publicKey = $settings['shared_public_key'] ?? null;
         $this->privateKey = $settings['shared_secret_key'] ?? null;
         $this->debugMode = wc_string_to_bool($settings['debug_enabled'] ?? false);
