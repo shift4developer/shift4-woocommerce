@@ -2,6 +2,8 @@
 
 namespace Shift4\WooCommerce\Gateway;
 
+if (!defined('ABSPATH')) exit;
+
 use Shift4\Exception\Shift4Exception;
 use Shift4\Request\PaymentMethodRequest;
 use Shift4\Request\PaymentMethodRequestApplePay;
@@ -85,12 +87,10 @@ class ApplePay extends \WC_Payment_Gateway
             SHIFT4_BUILD_HASH,
             false
         );
+
         wc_get_template(
             'applepay-form.php',
-            [
-                'publicKey' => $this->getPublicKey(),
-                'orderTotal' => $this->getOrderTotal(),
-            ],
+            [],
             'shift4',
             SHIFT4_PLUGIN_PATH . 'templates/'
         );

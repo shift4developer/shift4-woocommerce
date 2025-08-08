@@ -1,9 +1,10 @@
 === Shift4 for WooCommerce ===
+Contributors: shift4
 Tags: online store, shop, sell online, shift4, woocommerce
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 8.0
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,14 +20,15 @@ Features:
 * Apple Pay
 * 3D Secure
 * Full & Partial Refunds
-* Automatic settlement or authorise only transactions
+* Automatic settlement or authorise-only transactions
 * WooCommerce Classic Checkout
 * WooCommerce Block-based Checkout
 * Order via admin
+* Fraud detection and prevention
 
 == Installation ==
 
-1. Log in to your WordPress admin panel and go to Plugins -> Add New
+1. Log in to your WordPress admin panel and go to Plugins -> Add New.
 2. Type **Shift4 for WooCommerce** in the search box and click on the search button.
 3. Find Shift4 for WooCommerce plugin.
 4. Then click on Install Now and then activate the plugin.
@@ -34,7 +36,7 @@ Features:
 OR
 
 1. Download and save the **Shift4 for WooCommerce** plugin to your hard disk.
-2. Login to your WordPress and go to the Add Plugins page.
+2. Log in to your WordPress and go to the Add Plugins page.
 3. Click the Upload Plugin button to upload the zip.
 4. Click Install Now to install and activate the plugin.
 
@@ -43,24 +45,23 @@ OR
 WooCommerce > Settings > Payments
 
 This configuration is shared across both Card and Apple Pay sections, therefore it only needs to be updated and configured in one area and the settings will be shared. 
-* Public Key - Your Shift4 account Public Key. This can be located in your Shift4 account under Account Settings > API Keys
-* Secret Key - Your Shift4 account Secret Key. This can be located in your Shift4 account under Account Settings > API Keys
-* Capture Strategy - To set the capture of the payment to be immediate or set it to authorise only to be captured manually later.  
-* Debug Logging  - With debug logging enabled all data about charge requests will be recorded to Shift4_Payments so that unexpected behaviour can be identified. When debug is disabled decline responses will still be recorded.
+* **Public Key** - Your Shift4 account Public Key. This can be located in your Shift4 account under Account Settings > API Keys.
+* **Secret Key** - Your Shift4 account Secret Key. This can be located in your Shift4 account under Account Settings > API Keys.
+* **Capture Strategy** - To set the capture of the payment to be immediate or set it to authorise-only to be captured manually later.  
+* **Debug Logging** - With debug logging enabled, all data about charge requests will be recorded to Shift4_Payments so that unexpected behaviour can be identified. When debug is disabled, decline responses will still be recorded.
 
 Shift4 Card Payment
-* Enable / Disable - To enable or disable card payments via Shift4.
-* Title - Title of the payment method that will show in the checkout to the customer. 
-    * 3DS Mode - To enable or disable 3DS2 verification on card payments. 
-    * Disabled - 3DS is completely disabled
-    * Frictionless - 3DS will only be used if card 
-* Strict - Only cards that support 3DS will be permitted
-* Card Vaulting - To enable the ability for logged in customers to save their card details to use on future transactions.
+* **Enable / Disable** - To enable or disable card payments via Shift4.
+* **Title** - Title of the payment method that will show in the checkout to the customer. 
+* **3DS Mode** - To enable or disable 3DS2 verification on card payments. 
+    * **Disabled** - 3DS is completely disabled.
+    * **Frictionless** - 3DS will only be used if the card supports it.
+    * **Strict** - Only cards that support 3DS will be permitted.
+* **Card Vaulting** - To enable the ability for logged-in customers to save their card details to use on future transactions.
 
 Shift4 Apple Pay
-* Enable / Disable - To enable or disable Apple Pay payments via Shift4.
-* Title - Title of the payment method that will show in the checkout to the customer.  
-
+* **Enable / Disable** - To enable or disable Apple Pay payments via Shift4.
+* **Title** - Title of the payment method that will show in the checkout to the customer.  
 
 == Supported Payment Methods ==
 
@@ -90,6 +91,9 @@ For testing your integration you first need a Shift4 development account which y
 
 == Changelog ==
 
+2025-08-07 - version 1.0.9
+* Adjusted to wordpress repository requirements
+
 2025-07-24 - version 1.0.8
 * Extended settings to option with action to take when fraud detected
 
@@ -117,3 +121,6 @@ For testing your integration you first need a Shift4 development account which y
 
 2024-02-29 - version 1.0.0
 * Initial release.
+
+== Privacy policy ==
+[Privacy policy]https://www.shift4.com/privacy-policy

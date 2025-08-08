@@ -2,6 +2,8 @@
 
 namespace Shift4\WooCommerce\Gateway\Command;
 
+if (!defined('ABSPATH')) exit;
+
 use Shift4\Request\RefundRequest;
 use Shift4\WooCommerce\Model\CurrencyUnitConverter;
 use Shift4\WooCommerce\Model\GatewayFactory;

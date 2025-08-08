@@ -2,6 +2,8 @@
 
 namespace Shift4\WooCommerce\Model;
 
+if (!defined('ABSPATH')) exit;
+
 /**
  * Helper functions to convert between major and minor currency units while avoiding penny/cent differences
  * due to floating-point maths errors

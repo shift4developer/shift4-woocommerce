@@ -2,6 +2,8 @@
 
 namespace Shift4\WooCommerce\Gateway;
 
+if (!defined('ABSPATH')) exit;
+
 use Shift4\WooCommerce\Model\CurrencyUnitConverter;
 
 trait SharedGatewayLogic
