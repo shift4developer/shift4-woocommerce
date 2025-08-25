@@ -31,7 +31,7 @@ if (file_exists($commitHashFile)) {
     include $commitHashFile;
 }
 
-$constsFile = __DIR__ . '/utils/consts.php';
+$constsFile = __DIR__ . '/Utils/consts.php';
 if (file_exists($constsFile)) {
     include $constsFile;
 }

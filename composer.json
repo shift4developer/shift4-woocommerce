@@ -3,7 +3,8 @@
     "autoload": {
         "psr-4": {
             "Shift4\\WooCommerce\\Model\\": "Model",
-            "Shift4\\WooCommerce\\Gateway\\": "Gateway"
+            "Shift4\\WooCommerce\\Gateway\\": "Gateway",
+            "Shift4\\WooCommerce\\Utils\\": "Utils"
         }
     },
     "authors": [

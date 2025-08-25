@@ -15,6 +15,7 @@ use Shift4\WooCommerce\Model\ThreeDSecureSource;
 use Shift4\WooCommerce\Model\Logger;
 use Shift4\WooCommerce\Model\TokensiationManager;
 use Shift4\WooCommerce\Gateway\FraudHandler;
+use Shift4\WooCommerce\Utils\Shift4_WC_Validator;
 
 class Card extends \WC_Payment_Gateway_CC
 {
@@ -132,20 +133,28 @@ class Card extends \WC_Payment_Gateway_CC
         );
     }
 
+    private function get_token($token) {
+        return Shift4_WC_Validator::validateToken($this->sanitize_post_prop($token));
+    }
+
+    private function sanitize_post_prop($prop_name) {
+        return isset($_POST[$prop_name]) ? sanitize_text_field($_POST[$prop_name]) : null;
+    }
+
     private function get_card_payment_token() {
-        return sanitize_text_field($_POST[SHIFT4_WC_CARD_PAYMENT_TOKEN]);
+        return $this->sanitize_post_prop(SHIFT4_WC_CARD_PAYMENT_TOKEN);
     }
 
     private function get_card_token() {
-        return sanitize_text_field($_POST[SHIFT4_POST_DATA_CARD_TOKEN]);
+        return $this->get_token(SHIFT4_POST_DATA_CARD_TOKEN);
     }
 
     private function get_card_fingerprint() {
-        return sanitize_text_field($_POST[SHIFT4_CARD_FINGERPRINT]);
+        return $this->sanitize_post_prop(SHIFT4_CARD_FINGERPRINT);
     }
 
     private function get_card_new_payment_method() {
-        return sanitize_text_field($_POST[SHIFT4_CARD_NEW_PAYMENT_METHOD]);
+        return $this->sanitize_post_prop(SHIFT4_CARD_NEW_PAYMENT_METHOD);
     }
 
 
