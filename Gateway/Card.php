@@ -132,16 +132,36 @@ class Card extends \WC_Payment_Gateway_CC
         );
     }
 
+    private function get_card_payment_token() {
+        return sanitize_text_field($_POST[SHIFT4_WC_CARD_PAYMENT_TOKEN]);
+    }
+
+    private function get_card_token() {
+        return sanitize_text_field($_POST[SHIFT4_POST_DATA_CARD_TOKEN]);
+    }
+
+    private function get_card_fingerprint() {
+        return sanitize_text_field($_POST[SHIFT4_CARD_FINGERPRINT]);
+    }
+
+    private function get_card_new_payment_method() {
+        return sanitize_text_field($_POST[SHIFT4_CARD_NEW_PAYMENT_METHOD]);
+    }
+
+
+
     /**
      * @return void
      * @throws \Exception
      */
     public function validate_fields()
     {
-        if (isset($_POST['wc-shift4_card-payment-token']) && 'new' !== $_POST['wc-shift4_card-payment-token']) {
+        $card_payment_token = $this->get_card_payment_token();
+        if (isset($card_payment_token) && $card_payment_token !== 'new') {
             return true;
         }
-        if (empty($_POST[SHIFT4_POST_DATA_CARD_TOKEN])) {
+        $card_token = $this->get_card_token();
+        if (empty($card_token)) {
             // Parent method says to return false but that doesn't abort the checkout process, an exception is needed
             $this->logger->debug(__METHOD__ . ' failed validation');
             throw new \Exception('Shift4 payment token missing');
@@ -162,7 +182,8 @@ class Card extends \WC_Payment_Gateway_CC
 
         switch ($this->determinePaymentRequestType()) {
             case self::PAYMENT_TYPE_EXISTING_TOKEN:
-                $vaultedToken = \WC_Payment_Tokens::get($_POST['wc-shift4_card-payment-token']);
+                $card_payment_token = $this->get_card_payment_token();
+                $vaultedToken = \WC_Payment_Tokens::get($card_payment_token);
                 if ($vaultedToken->get_user_id() !== get_current_user_id()) {
                     throw new \Exception('Not your token');
                 }
@@ -178,7 +199,7 @@ class Card extends \WC_Payment_Gateway_CC
                 $chargeRequest->customerId($shift4CustomerId);
                 break;
             default:
-                $token = $_POST[SHIFT4_POST_DATA_CARD_TOKEN];
+                $token = $this->get_card_token();
                 break;
         }
         $chargeRequest->card($token);
@@ -254,8 +275,8 @@ class Card extends \WC_Payment_Gateway_CC
     private function determinePaymentRequestType()
     {
         $shift4_card_fingerprint = null;
-        if (isset($_POST['shift4_card_fingerprint'])) {
-            $shift4_card_fingerprint = sanitize_text_field($_POST['shift4_card_fingerprint']);
+        if (isset($_POST[SHIFT4_CARD_FINGERPRINT])) {
+            $shift4_card_fingerprint = $this->get_card_fingerprint();
         }
 
         $user_saved_tokens = \WC_Payment_Tokens::get_customer_tokens(get_current_user_id(), 'shift4_card');
@@ -263,7 +284,7 @@ class Card extends \WC_Payment_Gateway_CC
         foreach ($user_saved_tokens as $token) {
             $fingerprint = $token->get_meta('fingerprint');
             if ($fingerprint && $fingerprint === $shift4_card_fingerprint) {
-                $_POST['wc-shift4_card-payment-token'] = $token->get_id();
+                $_POST[SHIFT4_WC_CARD_PAYMENT_TOKEN] = $token->get_id();
                 break;
             }
         }
@@ -282,16 +303,18 @@ class Card extends \WC_Payment_Gateway_CC
          * - shift4_card_token=sometoken
          */
         // Use saved token scenario
-        if (isset($_POST['wc-shift4_card-payment-token']) && is_numeric($_POST['wc-shift4_card-payment-token'])) {
+        if (isset($_POST[SHIFT4_WC_CARD_PAYMENT_TOKEN]) && is_numeric($_POST[SHIFT4_WC_CARD_PAYMENT_TOKEN])) {
             return self::PAYMENT_TYPE_EXISTING_TOKEN;
         }
 
+        $shift4_card_new_payment_method = $this->get_card_new_payment_method();
+
         // Place order and save card scenario
         if (
-            isset($_POST['wc-shift4_card-new-payment-method'])
+            isset($shift4_card_new_payment_method)
             && (
-                $_POST['wc-shift4_card-new-payment-method'] === 'true'
-                || ($_POST['wc-shift4_card-new-payment-method'] === '1')
+                $shift4_card_new_payment_method === 'true'
+                || ($shift4_card_new_payment_method === '1')
             )
         ) {
             return self::PAYMENT_TYPE_SAVE_CARD;

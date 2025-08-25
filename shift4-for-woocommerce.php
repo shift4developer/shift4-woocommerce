@@ -109,7 +109,7 @@ if (in_array($plugin_path, wp_get_active_and_valid_plugins())) {
                 return;
             }
         
-            require_once plugin_dir_path(__FILE__) . 'class-wc-shift4-block-support.php';
+            require_once plugin_dir_path(__FILE__) . 'class-shift4-wc-block-support.php';
         
             $block_container = Automattic\WooCommerce\Blocks\Package::container();
             // registers as shared instance.

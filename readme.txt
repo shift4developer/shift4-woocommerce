@@ -80,6 +80,33 @@ Only customers with an account will be able to store their card for future use.
 **Apple Pay**
 Need to enable Apple Pay in your Shift4 Account - do to this please email: devsupport@shift4.com Your certificate merchant certificate needs to be registered either through your Shift4 Dashboard or at Apple's webpage. Please follow our manual for detailed instructions.
 
+== External Services ==
+
+This plugin connects to external services to enable its functionality:
+
+**Apple Pay**
+The plugin integrates with the Apple Pay API to provide Apple Pay functionality on your WooCommerce store. This requires loading the Apple Pay JavaScript SDK from the following domain:
+- `https://applepay.cdn-apple.com`
+
+The Apple Pay SDK is used to securely process payments via Apple Pay. No sensitive payment information is sent to your server; all sensitive data is handled by Apple Pay and Shift4.
+
+For more information, refer to:
+- [Apple Pay Terms of Service](https://www.apple.com/legal/internet-services/terms/site.html)
+- [Apple Pay Privacy Policy](https://www.apple.com/legal/privacy/en-ww/)
+
+**Shift4 API**
+The plugin communicates with the Shift4 API to process payments and manage transactions. This requires sending the following data:
+- Payment details (e.g., card token, Apple Pay token)
+- Order details (e.g., total amount, currency)
+
+Integration requires loading the Shift4 JavaScript SDK from the following url: https://js.dev.shift4.com/shift4.js
+
+The Shift4 API is hosted at:
+- `https://api.shift4.com`
+
+For more information, refer to:
+- [https://www.shift4.com/legal](https://www.shift4.com/legal)
+- [https://www.shift4.com/privacy-policy](https://www.shift4.com/privacy-policy)
 
 == Testing ==
 
@@ -121,6 +148,3 @@ For testing your integration you first need a Shift4 development account which y
 
 2024-02-29 - version 1.0.0
 * Initial release.
-
-== Privacy policy ==
-[Privacy policy]https://www.shift4.com/privacy-policy
