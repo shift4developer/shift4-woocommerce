@@ -353,7 +353,7 @@ class Card extends \WC_Payment_Gateway_CC
 
     private function constructIconUrl($fileName)
     {
-        return plugins_url() . '/shift4-for-woocommerce/assets/icons' . $fileName;
+        return SHIFT4_PLUGIN_URL . '/assets/icons' . $fileName;
     }
 
     public function addCardNetworkIconToSavedCards($html, $token)
