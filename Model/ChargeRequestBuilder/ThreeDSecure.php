@@ -2,6 +2,8 @@
 
 namespace Shift4\WooCommerce\Model\ChargeRequestBuilder;
 
+if (!defined('ABSPATH')) exit;
+
 use Shift4\Request\ChargeRequest;
 use Shift4\Request\ThreeDSecureRequest;
 use Shift4\WooCommerce\Model\ThreeDSecureSource;

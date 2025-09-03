@@ -2,6 +2,8 @@
 
 namespace Shift4\WooCommerce\Model;
 
+if (!defined('ABSPATH')) exit;
+
 use Shift4\Request\CardRequest;
 use Shift4\Request\CustomerRequest;
 
@@ -31,8 +33,9 @@ class TokensiationManager
             $success = update_user_meta($user->ID, self::SHIFT4_CUSTOMER_WP_USER_ID_KEY, $shift4CustomerId);
         }
 
+        $cardToken = sanitize_text_field($_POST[SHIFT4_POST_DATA_CARD_TOKEN]);
         $cardRequest = new CardRequest();
-        $cardRequest->id($_POST['shift4_card_token']);
+        $cardRequest->id($cardToken);
         $cardRequest->customerId($shift4CustomerId);
         $card = $gateway->createCard($cardRequest);
         $success = (int) $this->buildPaymentToken($card, $user);

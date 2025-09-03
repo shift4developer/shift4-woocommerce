@@ -1,5 +1,8 @@
 *** Shift4 for WooCommerce Changelog ***
 
+2025-08-07 - version 1.0.9
+* Adjusted to wordpress repository requirements
+
 2025-07-24 - version 1.0.8
 * Extended settings to option with action to take when fraud detected
 

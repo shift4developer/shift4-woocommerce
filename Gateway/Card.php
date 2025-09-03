@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Shift4\WooCommerce\Gateway;
 
+if (!defined('ABSPATH')) exit;
+
 use Shift4\Exception\Shift4Exception;
 use Shift4\WooCommerce\Gateway\Command\ChargeCommand;
 use Shift4\WooCommerce\Gateway\Command\RefundCommand;
@@ -13,6 +15,7 @@ use Shift4\WooCommerce\Model\ThreeDSecureSource;
 use Shift4\WooCommerce\Model\Logger;
 use Shift4\WooCommerce\Model\TokensiationManager;
 use Shift4\WooCommerce\Gateway\FraudHandler;
+use Shift4\WooCommerce\Utils\Shift4_WC_Validator;
 
 class Card extends \WC_Payment_Gateway_CC
 {
@@ -33,7 +36,7 @@ class Card extends \WC_Payment_Gateway_CC
         private Logger $logger,
     ) {
         $this->id = self::ID;
-        $this->icon = 'https://www.shift4shop.com/images/credit-card-logos/cc-sm-4_b.png';
+        $this->icon = $this->constructIconUrl("/cc-sm-4_b.webp");
         $this->has_fields = true;
         $this->method_title = 'Shift4 (Card)';
         $this->method_description = 'Take card payments via Shift4';
@@ -120,22 +123,41 @@ class Card extends \WC_Payment_Gateway_CC
 
     public function form()
     {
-        $shift4Config = [
-            'threeDS' => $this->threeDSecureMode(),
-            'threeDSValidationMessage' =>  __('3DS validation failed.', 'shift4-for-woocommerce'),
-            'publicKey' => $this->getPublicKey(),
-            'componentNeedsTriggering' => is_checkout_pay_page() || is_add_payment_method_page(),
-        ];
         wc_get_template(
             'card-form.php',
             [
-                'orderTotal' => $this->getOrderTotal(),
-                'shift4Config' => $shift4Config,
+                'orderTotal' => $this->getOrderTotal()
             ],
             'shift4',
             SHIFT4_PLUGIN_PATH . 'templates/',
         );
     }
+
+    private function get_token($token) {
+        return Shift4_WC_Validator::validateToken($this->sanitize_post_prop($token));
+    }
+
+    private function sanitize_post_prop($prop_name) {
+        return isset($_POST[$prop_name]) ? sanitize_text_field($_POST[$prop_name]) : null;
+    }
+
+    private function get_card_payment_token() {
+        return $this->sanitize_post_prop(SHIFT4_WC_CARD_PAYMENT_TOKEN);
+    }
+
+    private function get_card_token() {
+        return $this->get_token(SHIFT4_POST_DATA_CARD_TOKEN);
+    }
+
+    private function get_card_fingerprint() {
+        return $this->sanitize_post_prop(SHIFT4_CARD_FINGERPRINT);
+    }
+
+    private function get_card_new_payment_method() {
+        return $this->sanitize_post_prop(SHIFT4_CARD_NEW_PAYMENT_METHOD);
+    }
+
+
 
     /**
      * @return void
@@ -143,10 +165,12 @@ class Card extends \WC_Payment_Gateway_CC
      */
     public function validate_fields()
     {
-        if (isset($_POST['wc-shift4_card-payment-token']) && 'new' !== $_POST['wc-shift4_card-payment-token']) {
+        $card_payment_token = $this->get_card_payment_token();
+        if (isset($card_payment_token) && $card_payment_token !== 'new') {
             return true;
         }
-        if (empty($_POST['shift4_card_token'])) {
+        $card_token = $this->get_card_token();
+        if (empty($card_token)) {
             // Parent method says to return false but that doesn't abort the checkout process, an exception is needed
             $this->logger->debug(__METHOD__ . ' failed validation');
             throw new \Exception('Shift4 payment token missing');
@@ -167,7 +191,8 @@ class Card extends \WC_Payment_Gateway_CC
 
         switch ($this->determinePaymentRequestType()) {
             case self::PAYMENT_TYPE_EXISTING_TOKEN:
-                $vaultedToken = \WC_Payment_Tokens::get($_POST['wc-shift4_card-payment-token']);
+                $card_payment_token = $this->get_card_payment_token();
+                $vaultedToken = \WC_Payment_Tokens::get($card_payment_token);
                 if ($vaultedToken->get_user_id() !== get_current_user_id()) {
                     throw new \Exception('Not your token');
                 }
@@ -183,7 +208,7 @@ class Card extends \WC_Payment_Gateway_CC
                 $chargeRequest->customerId($shift4CustomerId);
                 break;
             default:
-                $token = $_POST['shift4_card_token'];
+                $token = $this->get_card_token();
                 break;
         }
         $chargeRequest->card($token);
@@ -259,8 +284,8 @@ class Card extends \WC_Payment_Gateway_CC
     private function determinePaymentRequestType()
     {
         $shift4_card_fingerprint = null;
-        if (isset($_POST['shift4_card_fingerprint'])) {
-            $shift4_card_fingerprint = sanitize_text_field($_POST['shift4_card_fingerprint']);
+        if (isset($_POST[SHIFT4_CARD_FINGERPRINT])) {
+            $shift4_card_fingerprint = $this->get_card_fingerprint();
         }
 
         $user_saved_tokens = \WC_Payment_Tokens::get_customer_tokens(get_current_user_id(), 'shift4_card');
@@ -268,7 +293,7 @@ class Card extends \WC_Payment_Gateway_CC
         foreach ($user_saved_tokens as $token) {
             $fingerprint = $token->get_meta('fingerprint');
             if ($fingerprint && $fingerprint === $shift4_card_fingerprint) {
-                $_POST['wc-shift4_card-payment-token'] = $token->get_id();
+                $_POST[SHIFT4_WC_CARD_PAYMENT_TOKEN] = $token->get_id();
                 break;
             }
         }
@@ -287,16 +312,18 @@ class Card extends \WC_Payment_Gateway_CC
          * - shift4_card_token=sometoken
          */
         // Use saved token scenario
-        if (isset($_POST['wc-shift4_card-payment-token']) && is_numeric($_POST['wc-shift4_card-payment-token'])) {
+        if (isset($_POST[SHIFT4_WC_CARD_PAYMENT_TOKEN]) && is_numeric($_POST[SHIFT4_WC_CARD_PAYMENT_TOKEN])) {
             return self::PAYMENT_TYPE_EXISTING_TOKEN;
         }
 
+        $shift4_card_new_payment_method = $this->get_card_new_payment_method();
+
         // Place order and save card scenario
         if (
-            isset($_POST['wc-shift4_card-new-payment-method'])
+            isset($shift4_card_new_payment_method)
             && (
-                $_POST['wc-shift4_card-new-payment-method'] === 'true'
-                || ($_POST['wc-shift4_card-new-payment-method'] === '1')
+                $shift4_card_new_payment_method === 'true'
+                || ($shift4_card_new_payment_method === '1')
             )
         ) {
             return self::PAYMENT_TYPE_SAVE_CARD;
@@ -324,17 +351,22 @@ class Card extends \WC_Payment_Gateway_CC
         return CurrencyUnitConverter::majorToMinor((string) WC()->cart->get_total('edit'));
     }
 
+    private function constructIconUrl($fileName)
+    {
+        return SHIFT4_PLUGIN_URL . '/assets/icons' . $fileName;
+    }
+
     public function addCardNetworkIconToSavedCards($html, $token)
     {
         $iconUrl = match ($token->get_card_type()) {
-            'Visa' => 'https://js.securionpay.com/6ab079a7/v2/img/visa.svg',
+            'Visa' => $this->constructIconUrl('/visa.svg'),
             'Maestro',
-            'MasterCard' => 'https://js.securionpay.com/6ab079a7/v2/img/mastercard.svg',
-            'American Express' => 'https://js.securionpay.com/6ab079a7/v2/img/amex.svg',
-            'Discover' => 'https://js.securionpay.com/6ab079a7/v2/img/discover.svg',
-            'Diners Club' => 'https://js.securionpay.com/6ab079a7/v2/img/diners.svg',
-            'JCB' => 'https://js.securionpay.com/6ab079a7/v2/img/jcb.svg',
-            default => 'https://js.securionpay.com/6ab079a7/v2/img/unknown.svg',
+            'MasterCard' => $this->constructIconUrl('/mastercard.svg'),
+            'American Express' => $this->constructIconUrl('/amex.svg'),
+            'Discover' => $this->constructIconUrl('/discover.svg'),
+            'Diners Club' => $this->constructIconUrl('/diners.svg'),
+            'JCB' => $this->constructIconUrl('/jcb.svg'),
+            default => $this->constructIconUrl('/unknown.svg'),
         };
 
         if (!preg_match('/([\S\s]*<label for="wc-shift4_card-payment-token-\d+">)([\S\s]*)/', $html, $matches)) {

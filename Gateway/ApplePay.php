@@ -2,6 +2,8 @@
 
 namespace Shift4\WooCommerce\Gateway;
 
+if (!defined('ABSPATH')) exit;
+
 use Shift4\Exception\Shift4Exception;
 use Shift4\Request\PaymentMethodRequest;
 use Shift4\Request\PaymentMethodRequestApplePay;
@@ -85,12 +87,10 @@ class ApplePay extends \WC_Payment_Gateway
             SHIFT4_BUILD_HASH,
             false
         );
+
         wc_get_template(
             'applepay-form.php',
-            [
-                'publicKey' => $this->getPublicKey(),
-                'orderTotal' => $this->getOrderTotal(),
-            ],
+            [],
             'shift4',
             SHIFT4_PLUGIN_PATH . 'templates/'
         );
@@ -102,7 +102,8 @@ class ApplePay extends \WC_Payment_Gateway
      */
     public function validate_fields()
     {
-        if (empty($_POST['shift4_applepay_token'])) {
+        $shift4_applepay_token = sanitize_text_field($_POST[SHIFT4_APPLE_PAY_TOKEN]);
+        if (empty($shift4_applepay_token)) {
             // Parent method says to return false but that doesn't abort the checkout process, an exception is needed
             $this->logger->debug(__METHOD__ . ' failed validation');
             throw new \Exception('Shift4 payment token missing');

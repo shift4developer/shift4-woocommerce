@@ -2,6 +2,8 @@
 
 namespace Shift4\WooCommerce\Model;
 
+if (!defined('ABSPATH')) exit;
+
 class CaptureStrategySource
 {
     public const MODE_CAPTURE = 'capture';

@@ -32,18 +32,5 @@
     </div>
     <input type="hidden" name="shift4_card_token" id="shift4_card_token"/>
     <input type="hidden" name="shift4_card_fingerprint" id="shift4_card_fingerprint"/>
-    <script>
-        if (!window.shift4Initialised) {
-            window.shift4Config = <?php echo json_encode($shift4Config); ?>;
-            if (window.shift4JsLoaded) {
-                initShift4();
-                window.shift4Initialised = true;
-            } else {
-                document.addEventListener("shift4JsLoaded", function () {
-                    initShift4();
-                    window.shift4Initialised = true;
-                });
-            }
-        }
-    </script>
 </div>
+

@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Shift4\\WooCommerce\\Utils\\' => array($baseDir . '/Utils'),
     'Shift4\\WooCommerce\\Model\\' => array($baseDir . '/Model'),
     'Shift4\\WooCommerce\\Gateway\\' => array($baseDir . '/Gateway'),
     'Shift4\\' => array($vendorDir . '/shift4/shift4-php/lib/Shift4'),

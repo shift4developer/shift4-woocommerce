@@ -1,9 +1,10 @@
 {
-    "name": "shift4/shift4-woocommerce",
+    "name": "shift4/shift4-for-woocommerce",
     "autoload": {
         "psr-4": {
             "Shift4\\WooCommerce\\Model\\": "Model",
-            "Shift4\\WooCommerce\\Gateway\\": "Gateway"
+            "Shift4\\WooCommerce\\Gateway\\": "Gateway",
+            "Shift4\\WooCommerce\\Utils\\": "Utils"
         }
     },
     "authors": [
