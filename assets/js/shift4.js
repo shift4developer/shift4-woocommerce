@@ -98,11 +98,18 @@ function initShift4() {
         }
     });
 
+    let isDuringCreatingTokenProcess = false;
+
     function paymentFormSubmit() {
-        // Send card data to Shift
-        return shift4.createToken(components)
-            .then(tokenCreatedCallback)
-            .catch(errorCallback);
+        if (!isDuringCreatingTokenProcess) {
+            isDuringCreatingTokenProcess = true
+            return shift4.createToken(components)
+                .then(tokenCreatedCallback)
+                .catch(errorCallback)
+                .finally(() => {
+                    isDuringCreatingTokenProcess = false;
+                });
+        }
     }
 
     function tokenCreatedCallback(token) {
@@ -204,15 +211,21 @@ function initShift4() {
      * @param {Object} params params amount number and currency code return by woocommerce in Shift4PaymentForm
      */
     async function block_paymentFormSubmit(params) {
-        try {
-            const token = await shift4.createToken(components)
-            await handleTokenCreated(token, {
-                ...params,
-                card: token.id
-            })
-        } catch (error) {
-            errorCallback(error)
-            throw error
+        if (!isDuringCreatingTokenProcess) {
+            console.log('inside', isDuringCreatingTokenProcess);
+            isDuringCreatingTokenProcess = true;
+            try {
+                const token = await shift4.createToken(components)
+                await handleTokenCreated(token, {
+                    ...params,
+                    card: token.id
+                })
+            } catch (error) {
+                errorCallback(error)
+                throw error
+            } finally {
+                isDuringCreatingTokenProcess = false;
+            }
         }
     }
 

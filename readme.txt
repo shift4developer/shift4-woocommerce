@@ -4,7 +4,7 @@ Tags: online store, shop, sell online, shift4, woocommerce
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 8.0
-Stable tag: 1.0.9
+Stable tag: 1.0.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,9 @@ For testing your integration you first need a Shift4 development account which y
 
 
 == Changelog ==
+
+2025-10-03 - version 1.0.10
+* Fix multiple calling createToken in checkout
 
 2025-08-07 - version 1.0.9
 * Adjusted to wordpress repository requirements
