@@ -212,7 +212,6 @@ function initShift4() {
      */
     async function block_paymentFormSubmit(params) {
         if (!isDuringCreatingTokenProcess) {
-            console.log('inside', isDuringCreatingTokenProcess);
             isDuringCreatingTokenProcess = true;
             try {
                 const token = await shift4.createToken(components)
