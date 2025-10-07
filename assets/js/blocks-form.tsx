@@ -21,8 +21,9 @@ export const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }: 
             } else {
                 document.addEventListener('shift4JsLoaded', initialize)
             }
+        } else {
+            window.shift4UpdatedCheckout()
         }
-        window.shift4UpdatedCheckout()
         const unsubscribe = onPaymentSetup(async () => {
             window.clearError()
             await window.shift4PaymentFormSubmit({
@@ -30,7 +31,9 @@ export const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }: 
                 currency: currency.code
             })
 
-            if (window.paymentMethodDataRef.current) {
+            const data = window.paymentMethodDataRef.current;
+
+            if (!!data && Object.keys(data).length > 0) {
                 return {
                     type: emitResponse.responseTypes.SUCCESS,
                     meta: {
@@ -41,7 +44,8 @@ export const Shift4PaymentForm = ({ eventRegistration, emitResponse, billing }: 
                 }
             }
             return {
-                type: emitResponse.responseTypes.ERROR
+                type: emitResponse.responseTypes.ERROR,
+                message: 'There was an error'
             }
         })
         return () => {
