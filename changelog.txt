@@ -1,5 +1,8 @@
 *** Shift4 for WooCommerce Changelog ***
 
+2025-10-09 - version 1.0.11
+* Improved error handling
+
 2025-10-03 - version 1.0.10
 * Fix multiple calling createToken in checkout
 
