@@ -130,10 +130,7 @@ function initShift4() {
     }
 
     function errorCallback(error) {
-        if (error.message) {
-            // Display error message
-            addError(error.message);
-        }
+        addError(error?.message || "An unexpected error occurred during the checkout process. Please try again later or contact support if the issue persists.");
         setValidationState(false);
         $('form#order_review').unblock();
         $('form#add_payment_method').unblock();
