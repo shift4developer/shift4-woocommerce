@@ -26,14 +26,14 @@ use Shift4\WooCommerce\Gateway\Card;
 use Shift4\WooCommerce\Model\ConfigProvider;
 
 // Define version ID for current build
-$commitHashFile = __DIR__ . '/buildId.php';
-if (file_exists($commitHashFile)) {
-    include $commitHashFile;
+$shift4_for_woocommerce_commit_hash_file = __DIR__ . '/buildId.php';
+if (file_exists($shift4_for_woocommerce_commit_hash_file)) {
+    include $shift4_for_woocommerce_commit_hash_file;
 }
 
-$constsFile = __DIR__ . '/Utils/consts.php';
-if (file_exists($constsFile)) {
-    include $constsFile;
+$shift4_for_woocommerce_consts_file = __DIR__ . '/Utils/consts.php';
+if (file_exists($shift4_for_woocommerce_consts_file)) {
+    include $shift4_for_woocommerce_consts_file;
 }
 
 define("SHIFT4_PLUGIN_PATH", plugin_dir_path(__FILE__));
