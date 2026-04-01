@@ -110,6 +110,9 @@ For testing your integration you first need a Shift4 development account which y
 
 ## Changelog
 
+2026-04-01 - version 1.0.12
+* Fixed: Replaced jQuery .size() with native DOM API to fix missing card input fields after checkout reload.
+
 2025-10-09 - version 1.0.11
 * Improved error handling
 

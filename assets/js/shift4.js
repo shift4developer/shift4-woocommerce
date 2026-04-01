@@ -35,10 +35,14 @@ function initShift4() {
     function updatedCheckout() {
         // Create components to securely collect sensitive payment data
         try {
-            const isInitialzed = $('[data-shift4="number"]').children().size() > 0;
+            const numberElementChildren =
+                document.querySelector('[data-shift4="number"]')?.children.length ?? 0;
+            const isInitialzed = numberElementChildren > 0;
 
             if (!isInitialzed) {
-                components = shift4.createComponentGroup().automount(shift4FormSelector);
+                components = shift4
+                    .createComponentGroup()
+                    .automount(shift4FormSelector);
             }
         } catch (err) {
             // When WC checkout initializes it reloads the payment section so catch any missing DOM errors
