@@ -83,7 +83,7 @@ function initShift4() {
     });
 
     // Handler for add-payment-method and order-review form
-    $checkoutForm.on('submit', function (event) {
+    $checkoutForm.off('submit.shift4').on('submit.shift4', function (event) {
         const currentForm = $checkoutForm[0];
         const forms = ['add_payment_method', 'order_review'];
         if (forms.includes(currentForm.id) && document.getElementById('payment_method_shift4_card').checked) {
@@ -102,16 +102,16 @@ function initShift4() {
         }
     });
 
-    let isDuringCreatingTokenProcess = false;
+    window.shift4IsDuringCreatingTokenProcess = window.shift4IsDuringCreatingTokenProcess ?? false;
 
     function paymentFormSubmit() {
-        if (!isDuringCreatingTokenProcess) {
-            isDuringCreatingTokenProcess = true
+        if (!window.shift4IsDuringCreatingTokenProcess) {
+            window.shift4IsDuringCreatingTokenProcess = true
             return shift4.createToken(components)
                 .then(tokenCreatedCallback)
                 .catch(errorCallback)
                 .finally(() => {
-                    isDuringCreatingTokenProcess = false;
+                    window.shift4IsDuringCreatingTokenProcess = false;
                 });
         }
     }
@@ -212,8 +212,8 @@ function initShift4() {
      * @param {Object} params params amount number and currency code return by woocommerce in Shift4PaymentForm
      */
     async function block_paymentFormSubmit(params) {
-        if (!isDuringCreatingTokenProcess) {
-            isDuringCreatingTokenProcess = true;
+        if (!window.shift4IsDuringCreatingTokenProcess) {
+            window.shift4IsDuringCreatingTokenProcess = true;
             try {
                 const token = await shift4.createToken(components)
                 await handleTokenCreated(token, {
@@ -224,7 +224,7 @@ function initShift4() {
                 errorCallback(error)
                 throw error
             } finally {
-                isDuringCreatingTokenProcess = false;
+                window.shift4IsDuringCreatingTokenProcess = false;
             }
         }
     }
