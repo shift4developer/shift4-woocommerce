@@ -4,7 +4,7 @@ Tags: online store, shop, sell online, shift4, woocommerce
 Requires at least: 6.7
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 1.0.13
+Stable tag: 1.0.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,9 @@ For testing your integration you first need a Shift4 development account which y
 
 
 == Changelog ==
+
+2026-04-02 - version 1.0.14
+* Fixed: Prevent infinite loop when submitting add-payment-method and order-review forms by using native DOM submit instead of jQuery submit after tokenization.
 
 2026-04-02 - version 1.0.13
 * Fixed: Prevent duplicate createToken calls by moving the in-progress guard to window scope and namespacing the submit event handler.

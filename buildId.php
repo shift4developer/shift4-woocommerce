@@ -1,4 +1,4 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-const SHIFT4_BUILD_HASH = '4337605';
+const SHIFT4_BUILD_HASH = '4337606';
