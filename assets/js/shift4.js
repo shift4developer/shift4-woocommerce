@@ -35,10 +35,14 @@ function initShift4() {
     function updatedCheckout() {
         // Create components to securely collect sensitive payment data
         try {
-            const isInitialzed = $('[data-shift4="number"]').children().size() > 0;
+            const numberElementChildren =
+                document.querySelector('[data-shift4="number"]')?.children.length ?? 0;
+            const isInitialzed = numberElementChildren > 0;
 
             if (!isInitialzed) {
-                components = shift4.createComponentGroup().automount(shift4FormSelector);
+                components = shift4
+                    .createComponentGroup()
+                    .automount(shift4FormSelector);
             }
         } catch (err) {
             // When WC checkout initializes it reloads the payment section so catch any missing DOM errors
@@ -79,7 +83,7 @@ function initShift4() {
     });
 
     // Handler for add-payment-method and order-review form
-    $checkoutForm.on('submit', function (event) {
+    $checkoutForm.off('submit.shift4').on('submit.shift4', function (event) {
         const currentForm = $checkoutForm[0];
         const forms = ['add_payment_method', 'order_review'];
         if (forms.includes(currentForm.id) && document.getElementById('payment_method_shift4_card').checked) {
@@ -98,16 +102,16 @@ function initShift4() {
         }
     });
 
-    let isDuringCreatingTokenProcess = false;
+    window.shift4IsDuringCreatingTokenProcess = window.shift4IsDuringCreatingTokenProcess ?? false;
 
     function paymentFormSubmit() {
-        if (!isDuringCreatingTokenProcess) {
-            isDuringCreatingTokenProcess = true
+        if (!window.shift4IsDuringCreatingTokenProcess) {
+            window.shift4IsDuringCreatingTokenProcess = true
             return shift4.createToken(components)
                 .then(tokenCreatedCallback)
                 .catch(errorCallback)
                 .finally(() => {
-                    isDuringCreatingTokenProcess = false;
+                    window.shift4IsDuringCreatingTokenProcess = false;
                 });
         }
     }
@@ -122,7 +126,7 @@ function initShift4() {
             };
             // Open frame with 3-D Secure process
             shift4.verifyThreeDSecure(request)
-                .then(threeDSecureCompletedCallback)
+                .then((result) => threeDSecureCompletedCallback(result, setTokenAndContinue))
                 .catch(errorCallback);
         } else {
             setTokenAndContinue(token);
@@ -138,15 +142,15 @@ function initShift4() {
         return false;
     }
 
-    function threeDSecureCompletedCallback(token) {
+    function threeDSecureCompletedCallback(token, onComplete) {
         switch (window.shift4CardSettings.threeDS) {
             case 'disabled':
-                setTokenAndContinue(token);
+                onComplete(token);
                 break;
 
             case 'frictionless':
                 if (token.threeDSecureInfo?.enrolled === false || token.threeDSecureInfo?.liabilityShift === 'successful') {
-                    setTokenAndContinue(token);
+                    onComplete(token);
                 } else {
                     addError(config.threeDSValidationMessage);
                 }
@@ -154,14 +158,14 @@ function initShift4() {
 
             case 'strict':
                 if (token.threeDSecureInfo?.enrolled === true) {
-                    setTokenAndContinue(token);
+                    onComplete(token);
                 } else {
                     addError(config.threeDSValidationMessage);
                 }
         }
     }
 
-    function setTokenAndContinue(token) {
+    function applyTokenFields(token) {
         window.paymentMethodDataRef.current = {
             'shift4_card_token': token.id,
             'shift4_card_fingerprint': token.fingerprint
@@ -172,8 +176,21 @@ function initShift4() {
             tokenField.value = token.id;
             fingerprintField.value = token.fingerprint;
         }
+    }
+
+    function setTokenAndContinue(token) {
+        applyTokenFields(token);
         setValidationState(true);
-        $checkoutForm.submit();
+        const formId = $checkoutForm[0]?.id;
+        if (['add_payment_method', 'order_review'].includes(formId)) {
+            $checkoutForm[0].submit();
+        } else {
+            $checkoutForm.submit();
+        }
+    }
+
+    function block_setTokenAndContinue(token) {
+        applyTokenFields(token);
     }
 
     function setValidationState(state) {
@@ -208,8 +225,8 @@ function initShift4() {
      * @param {Object} params params amount number and currency code return by woocommerce in Shift4PaymentForm
      */
     async function block_paymentFormSubmit(params) {
-        if (!isDuringCreatingTokenProcess) {
-            isDuringCreatingTokenProcess = true;
+        if (!window.shift4IsDuringCreatingTokenProcess) {
+            window.shift4IsDuringCreatingTokenProcess = true;
             try {
                 const token = await shift4.createToken(components)
                 await handleTokenCreated(token, {
@@ -220,7 +237,7 @@ function initShift4() {
                 errorCallback(error)
                 throw error
             } finally {
-                isDuringCreatingTokenProcess = false;
+                window.shift4IsDuringCreatingTokenProcess = false;
             }
         }
     }
@@ -241,12 +258,12 @@ function initShift4() {
         if (['strict', 'frictionless'].includes(window.shift4CardSettings.threeDS)) {
             try {
                 const result = await shift4.verifyThreeDSecure(request)
-                threeDSecureCompletedCallback(result)
+                threeDSecureCompletedCallback(result, block_setTokenAndContinue)
             } catch (error) {
                 errorCallback(error);
             }
         } else {
-            setTokenAndContinue(token)
+            block_setTokenAndContinue(token)
         }
     }
 
